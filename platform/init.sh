@@ -27,10 +27,17 @@ set -x
     sudo apt install "linux-modules-extra-$(uname -r)" -y
 
     #* Install molly-guard package to guard against accidental shutdowns/reboots
-    sudo apt-get install molly-guard -y
+    sudo apt-get install molly-guard jq -y
+
+    #* Install other useful tools
+    sudo apt-get install htop jq -y
+    sudo apt-get install net-tools iputils-ping iproute2 -y
 
     #* Increase the number of INotify instances that can be created per real user ID with the command.
     sudo sysctl fs.inotify.max_user_instances=1024
+
+    sudo ip netns add testns
+    sudo ip netns delete testns
 
     exit 0
 }

@@ -1,0 +1,12 @@
+ZURI   BASE     1mbit 5ms    50ms
+ZURI   GENE     1mbit 5ms    50ms
+ZURI   LUGA     1mbit 5ms    50ms
+ZURI   MUNI     1mbit 5ms    50ms
+ZURI   VIEN     1mbit 5ms    50ms
+BASE   GENE     1mbit 5ms    50ms
+BASE   MUNI     1mbit 5ms    50ms
+BASE   LYON     1mbit 5ms    50ms
+GENE   LUGA     1mbit 5ms    50ms
+GENE   LYON     1mbit 5ms    50ms
+LUGA   MILA     1mbit 5ms    50ms
+LUGA   VIEN     1mbit 5ms    50ms
