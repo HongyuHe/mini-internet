@@ -58,7 +58,7 @@ config_defaults = {
     'ANALYSIS_CACHE': '/tmp/cache/analysis.db',
     'VPN_ENABLED':True,
     'VPN_NO_CLIENTS':1,
-    'CHATBOT_INTEGRATION':True
+    'CHATBOT_INTEGRATION':False
 }
 
 # TODO: This is kind of ugly:

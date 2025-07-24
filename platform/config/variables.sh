@@ -41,7 +41,7 @@ WEBSERVER_SOURCEFILES="/webserver"
 
 # This year we are adding a chatbot to help the students with the project
 # By enabling this a new tab will be added which is used to connect to the chatbot webserver
-CHATBOT_INTEGRATION=true
+CHATBOT_INTEGRATION=false
 
 
 # =============================================================================
