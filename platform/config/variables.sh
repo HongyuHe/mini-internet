@@ -13,7 +13,7 @@ DOCKERHUB_PREFIX="miniinterneteth/"
 # This URL will be suggested as the default location for students
 # to download their configs. It should be publicly accessible via ssh at port
 # 2000 + X, where X is each AS number.
-SSH_URL="westvleteren.ethz.ch"
+SSH_URL="clnode178.clemson.cloudlab.us"
 
 # =============================================================================
 # WEBSERVER
@@ -23,8 +23,8 @@ SSH_URL="westvleteren.ethz.ch"
 # You need to specify the hostname of the server and an email for
 # LetsEncrypt to be enabled.
 # UPDATE THOSE VARIABLES. WEBSERVER_HOSTNAME -> hostname of the server and EMAIL -> empty string (for http)
-WEBSERVER_HOSTNAME="westvleteren.ethz.ch"
-WEBSERVER_ACME_MAIL="nsg@ethz.ch"
+WEBSERVER_HOSTNAME="clnode178.clemson.cloudlab.us"
+WEBSERVER_ACME_MAIL=""
 # Hostname and ports for the webserver and krill on the host.
 # (must be publicly available)
 # you can change http and https ports, but letsencrypt won't work, so its not recommended.
@@ -33,7 +33,7 @@ WEBSERVER_PORT_HTTPS="443"
 # Use the one you want, make sure to make it reachable from outside.
 WEBSERVER_PORT_KRILL="3000"
 # Put your timezone here.
-WEBSERVER_TZ="Europe/Zurich"
+WEBSERVER_TZ="America/Denver"
 # If you want to use the files from the docker image, set this variable to "":
 # WEBSERVER_SOURCEFILES=""
 # If you want your own webserver files instead add the filepath here (relative to the platform/config folder)
@@ -42,6 +42,7 @@ WEBSERVER_SOURCEFILES="/webserver"
 # This year we are adding a chatbot to help the students with the project
 # By enabling this a new tab will be added which is used to connect to the chatbot webserver
 CHATBOT_INTEGRATION=false
+CHATBOT_URL="https://de.wikipedia.org/wiki/Chatbot"
 
 
 # =============================================================================

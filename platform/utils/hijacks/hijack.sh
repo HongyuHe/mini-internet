@@ -153,3 +153,5 @@ run_hijack () {
         fi
     done
 }
+
+run_hijack "$@"
