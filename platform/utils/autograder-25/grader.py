@@ -1663,7 +1663,7 @@ if __name__ == "__main__":
             start_shadow_as(cur_asn)
         time.sleep(5)
         total_points = []
-        for question in [q1_1,q1_2,q1_3,q1_4,q2_1,q2_2,q2_3,q2_4,q2_5,q2_6,q2_7]:
+        for question in [q1_1,q1_2,q1_3,q1_4,q2_1,q2_2,q2_3,q2_4,q2_5,q2_6]:
             total_points.append(question(cur_asn,log_file=log_file))
 
             # check_l2_conn_in_dc(cur_asn, log_file=log_file),
