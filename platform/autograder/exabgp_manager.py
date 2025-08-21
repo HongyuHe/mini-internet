@@ -8,7 +8,7 @@ import re
 from collections import defaultdict
 
 from ctn_utils import client, exec_ctn, get_ctn_name_lst, remove_ctn
-import live_mnet_utils as mnet
+import mnet_utils as mnet
 
 EXABGP_CTN_NAME = "AUTOGRADER_EXABGP_PEER"
 EXABGP_CONF_LOCAL_PATH = os.path.join(os.getcwd(), "exabgp.conf")
