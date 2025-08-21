@@ -1,0 +1,58 @@
+04:08:46 | 20     | welcome         | Thank you for using ExaBGP
+04:08:46 | 20     | version         | 4.2.8
+04:08:46 | 20     | interpreter     | 3.9.2 (default, Feb 28 2021, 17:03:44)  [GCC 10.2.1 20210110]
+04:08:46 | 20     | os              | Linux EXABGP 6.8.0-59-generic #61-Ubuntu SMP PREEMPT_DYNAMIC Fri Apr 11 23:16:11 UTC 2025 x86_64
+04:08:46 | 20     | installation    | 
+04:08:46 | 20     | cli control     | named pipes for the cli are:
+04:08:46 | 20     | cli control     | to send commands  /run/exabgp.in
+04:08:46 | 20     | cli control     | to read responses /run/exabgp.out
+04:08:46 | 20     | configuration   | performing reload of exabgp 4.2.8
+04:08:46 | 20     | reactor         | loaded new configuration successfully
+04:08:46 | 20     | reactor         | connected to peer-6 with outgoing-1 180.143.0.143-180.143.0.43
+04:08:46 | 20     | reactor         | connected to peer-2 with outgoing-2 179.42.43.42-179.42.43.43
+04:08:46 | 20     | reactor         | connected to peer-3 with outgoing-3 179.43.45.45-179.43.45.43
+04:08:46 | 20     | reactor         | connected to peer-1 with outgoing-4 179.41.43.41-179.41.43.43
+04:08:46 | 20     | reactor         | connected to peer-5 with outgoing-5 179.43.44.44-179.43.44.43
+04:08:46 | 20     | reactor         | connected to peer-4 with outgoing-6 179.43.46.46-179.43.46.43
+04:16:51 | 20     | api             | route added to neighbor 179.41.43.43 local-ip 179.41.43.41 local-as 41 peer-as 43 router-id 41.154.0.1 family-allowed in-open : 27.0.0.0/8 next-hop self as-path [ 41 27 ]
+04:16:51 | 20     | api             | route added to neighbor 179.42.43.43 local-ip 179.42.43.42 local-as 42 peer-as 43 router-id 42.154.0.1 family-allowed in-open : 27.0.0.0/8 next-hop self as-path [ 42 27 ]
+04:16:51 | 20     | api             | route added to neighbor 179.43.45.43 local-ip 179.43.45.45 local-as 45 peer-as 43 router-id 45.151.0.1 family-allowed in-open : 27.0.0.0/8 next-hop self as-path [ 45 27 ]
+04:16:51 | 20     | api             | route added to neighbor 179.43.46.43 local-ip 179.43.46.46 local-as 46 peer-as 43 router-id 46.151.0.1 family-allowed in-open : 27.0.0.0/8 next-hop self as-path [ 46 27 ]
+04:16:51 | 20     | api             | route added to neighbor 179.43.44.43 local-ip 179.43.44.44 local-as 44 peer-as 43 router-id 44.153.0.1 family-allowed in-open : 27.0.0.0/8 next-hop self as-path [ 44 27 ]
+04:16:52 | 20     | api             | route added to neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 27.0.0.0/8 next-hop self as-path [ 28 27 ] community 143:43
+04:17:13 | 20     | api             | route removed from neighbor 179.43.45.43 local-ip 179.43.45.45 local-as 45 peer-as 43 router-id 45.151.0.1 family-allowed in-open : 27.0.0.0/8 next-hop 0.0.0.0
+04:17:35 | 20     | api             | route removed from neighbor 179.43.46.43 local-ip 179.43.46.46 local-as 46 peer-as 43 router-id 46.151.0.1 family-allowed in-open : 27.0.0.0/8 next-hop 0.0.0.0
+04:17:57 | 20     | api             | route removed from neighbor 179.43.44.43 local-ip 179.43.44.44 local-as 44 peer-as 43 router-id 44.153.0.1 family-allowed in-open : 27.0.0.0/8 next-hop 0.0.0.0
+04:18:18 | 20     | api             | route removed from neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 27.0.0.0/8 next-hop 0.0.0.0
+04:18:40 | 20     | api             | route removed from neighbor 179.41.43.43 local-ip 179.41.43.41 local-as 41 peer-as 43 router-id 41.154.0.1 family-allowed in-open : 27.0.0.0/8 next-hop 0.0.0.0
+04:19:02 | 20     | api             | route removed from neighbor 179.42.43.43 local-ip 179.42.43.42 local-as 42 peer-as 43 router-id 42.154.0.1 family-allowed in-open : 27.0.0.0/8 next-hop 0.0.0.0
+04:19:24 | 20     | api             | route added to neighbor 179.41.43.43 local-ip 179.41.43.41 local-as 41 peer-as 43 router-id 41.154.0.1 family-allowed in-open : 64.0.0.0/8 next-hop self as-path [ 41 64 ]
+04:19:24 | 20     | api             | route added to neighbor 179.42.43.43 local-ip 179.42.43.42 local-as 42 peer-as 43 router-id 42.154.0.1 family-allowed in-open : 69.0.0.0/8 next-hop self as-path [ 42 69 ]
+04:19:24 | 20     | api             | route added to neighbor 179.43.45.43 local-ip 179.43.45.45 local-as 45 peer-as 43 router-id 45.151.0.1 family-allowed in-open : 65.0.0.0/8 next-hop self as-path [ 45 65 ]
+04:19:24 | 20     | api             | route added to neighbor 179.43.46.43 local-ip 179.43.46.46 local-as 46 peer-as 43 router-id 46.151.0.1 family-allowed in-open : 72.0.0.0/8 next-hop self as-path [ 46 72 ]
+04:19:24 | 20     | api             | route added to neighbor 179.43.44.43 local-ip 179.43.44.44 local-as 44 peer-as 43 router-id 44.153.0.1 family-allowed in-open : 63.0.0.0/8 next-hop self as-path [ 44 63 ]
+04:19:25 | 20     | api             | route added to neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 62.0.0.0/8 next-hop self as-path [ 28 62 ] community 143:43
+04:19:45 | 20     | api             | route removed from neighbor 179.41.43.43 local-ip 179.41.43.41 local-as 41 peer-as 43 router-id 41.154.0.1 family-allowed in-open : 64.0.0.0/8 next-hop 0.0.0.0
+04:19:45 | 20     | api             | route removed from neighbor 179.42.43.43 local-ip 179.42.43.42 local-as 42 peer-as 43 router-id 42.154.0.1 family-allowed in-open : 69.0.0.0/8 next-hop 0.0.0.0
+04:19:46 | 20     | api             | route removed from neighbor 179.43.45.43 local-ip 179.43.45.45 local-as 45 peer-as 43 router-id 45.151.0.1 family-allowed in-open : 65.0.0.0/8 next-hop 0.0.0.0
+04:19:46 | 20     | api             | route removed from neighbor 179.43.46.43 local-ip 179.43.46.46 local-as 46 peer-as 43 router-id 46.151.0.1 family-allowed in-open : 72.0.0.0/8 next-hop 0.0.0.0
+04:19:46 | 20     | api             | route removed from neighbor 179.43.44.43 local-ip 179.43.44.44 local-as 44 peer-as 43 router-id 44.153.0.1 family-allowed in-open : 63.0.0.0/8 next-hop 0.0.0.0
+04:19:46 | 20     | api             | route removed from neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 62.0.0.0/8 next-hop 0.0.0.0
+04:19:47 | 20     | api             | route added to neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 26.0.0.0/8 next-hop self as-path [ 32 26 ] community 143:43
+04:20:07 | 20     | api             | route removed from neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 26.0.0.0/8 next-hop 0.0.0.0
+04:20:07 | 20     | api             | route added to neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 45.0.0.0/8 next-hop self as-path [ 45 ] community 143:43
+04:20:28 | 20     | api             | route removed from neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 45.0.0.0/8 next-hop 0.0.0.0
+04:20:28 | 20     | api             | route added to neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 12.0.0.0/8 next-hop self as-path [ 28 45 12 ] community 143:43
+04:20:48 | 20     | api             | route removed from neighbor 180.143.0.43 local-ip 180.143.0.143 local-as 143 peer-as 43 router-id 180.80.143.0 family-allowed in-open : 12.0.0.0/8 next-hop 0.0.0.0
+04:20:49 | 20     | api             | route added to neighbor 179.41.43.43 local-ip 179.41.43.41 local-as 41 peer-as 43 router-id 41.154.0.1 family-allowed in-open : 102.0.0.0/8 next-hop self as-path [ 41 102 ]
+04:20:49 | 20     | api             | route added to neighbor 179.42.43.43 local-ip 179.42.43.42 local-as 42 peer-as 43 router-id 42.154.0.1 family-allowed in-open : 102.0.0.0/8 next-hop self as-path [ 42 102 ]
+04:20:50 | 20     | api             | route added to neighbor 179.43.45.43 local-ip 179.43.45.45 local-as 45 peer-as 43 router-id 45.151.0.1 family-allowed in-open : 102.0.0.0/8 next-hop self as-path [ 45 102 ]
+04:20:50 | 20     | api             | route added to neighbor 179.43.46.43 local-ip 179.43.46.46 local-as 46 peer-as 43 router-id 46.151.0.1 family-allowed in-open : 102.0.0.0/8 next-hop self as-path [ 46 102 ]
+04:21:11 | 20     | api             | route removed from neighbor 179.43.45.43 local-ip 179.43.45.45 local-as 45 peer-as 43 router-id 45.151.0.1 family-allowed in-open : 102.0.0.0/8 next-hop 0.0.0.0
+04:21:33 | 20     | api             | route removed from neighbor 179.43.46.43 local-ip 179.43.46.46 local-as 46 peer-as 43 router-id 46.151.0.1 family-allowed in-open : 102.0.0.0/8 next-hop 0.0.0.0
+04:21:55 | 20     | api             | route removed from neighbor 179.41.43.43 local-ip 179.41.43.41 local-as 41 peer-as 43 router-id 41.154.0.1 family-allowed in-open : 102.0.0.0/8 next-hop 0.0.0.0
+04:22:17 | 20     | api             | route removed from neighbor 179.42.43.43 local-ip 179.42.43.42 local-as 42 peer-as 43 router-id 42.154.0.1 family-allowed in-open : 102.0.0.0/8 next-hop 0.0.0.0
+04:22:38 | 20     | api             | route added to neighbor 179.42.43.43 local-ip 179.42.43.42 local-as 42 peer-as 43 router-id 42.154.0.1 family-allowed in-open : 114.0.0.0/8 next-hop self as-path [ 42 113 ]
+04:23:00 | 20     | api             | route removed from neighbor 179.42.43.43 local-ip 179.42.43.42 local-as 42 peer-as 43 router-id 42.154.0.1 family-allowed in-open : 114.0.0.0/8 next-hop 0.0.0.0
+04:23:00 | 20     | api             | route added to neighbor 179.43.45.43 local-ip 179.43.45.45 local-as 45 peer-as 43 router-id 45.151.0.1 family-allowed in-open : 11.76.166.10/32 next-hop self as-path [ 45 10 ]
+04:23:22 | 20     | api             | route removed from neighbor 179.43.45.43 local-ip 179.43.45.45 local-as 45 peer-as 43 router-id 45.151.0.1 family-allowed in-open : 11.76.166.10/32 next-hop 0.0.0.0

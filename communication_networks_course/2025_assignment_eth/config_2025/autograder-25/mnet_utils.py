@@ -123,7 +123,7 @@ NB_CONN = {
     "IXP": "LYON",
 }
 
-SD_CTN_PREFIX = ""
+SD_CTN_PREFIX = "SD"
 
 ROUTINATOR_R = "ZURI"
 BGP_CONV_WAIT = 20
@@ -281,7 +281,7 @@ def get_exp_intf_ip(addr_type, asn, r_name, other_r_name=""):
 def get_r_ctn_name(asn, r_name):
     """Return the ctn name of a router."""
     # TODO: better format default asn
-    # asn = SD_CTN_PREFIX
+    asn = SD_CTN_PREFIX
     assert r_name in REGION_NAMES
     return f"{asn}_{r_name}router"
 
@@ -292,7 +292,7 @@ def get_h_ctn_name(asn, name):
 
     The host can be either a region or l2 host name.
     """
-    # asn = SD_CTN_PREFIX
+    asn = SD_CTN_PREFIX
     if name in REGION_NAMES:
         return f"{asn}_{name}host"
     elif name in L2_DCN_HOST_NAMES:
@@ -304,7 +304,7 @@ def get_h_ctn_name(asn, name):
 
 def get_s_ctn_name(asn, s_name):
     """Return the ctn name of a swtich."""
-    # asn = SD_CTN_PREFIX
+    asn = SD_CTN_PREFIX
     if s_name in L2_DCN_SW_NAMES:
         return f"{asn}_L2_L2N_{s_name}"
     elif s_name in L2_DCS_SW_NAMES:
