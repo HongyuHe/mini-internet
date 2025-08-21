@@ -296,19 +296,19 @@ def get_h_ctn_name(asn, name):
     if name in REGION_NAMES:
         return f"{asn}_{name}host"
     elif name in L2_DCN_HOST_NAMES:
-        return f"{asn}_L2_L2N_{name}"
+        return f"{asn}_L2_DCN_{name}"
     else:
         assert name in L2_DCS_HOST_NAMES
-        return f"{asn}_L2_L2S_{name}"
+        return f"{asn}_L2_DCS_{name}"
 
 
 def get_s_ctn_name(asn, s_name):
     """Return the ctn name of a swtich."""
     # asn = SD_CTN_PREFIX
     if s_name in L2_DCN_SW_NAMES:
-        return f"{asn}_L2_L2N_{s_name}"
+        return f"{asn}_L2_DCN_{s_name}"
     elif s_name in L2_DCS_SW_NAMES:
-        return f"{asn}_L2_L2S_{s_name}"
+        return f"{asn}_L2_DCS_{s_name}"
 
 
 def get_ext_intf_names(asn, nb_name):

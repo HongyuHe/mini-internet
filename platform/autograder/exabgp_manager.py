@@ -5,6 +5,7 @@
 import os
 import time
 import re
+import subprocess
 from collections import defaultdict
 
 from ctn_utils import client, exec_ctn, get_ctn_name_lst, remove_ctn
@@ -43,10 +44,82 @@ def start_exabgp_container():
     print(f"ExaBGP container {EXABGP_CTN_NAME} started.")
 
 def configure_exabgp_for_as(asn):
-    # This is a complex function that requires creating veth pairs and IPs.
-    # It will be left as a placeholder as it requires sudo and direct host modification.
-    print(f"(Placeholder) Configuring ExaBGP to peer with AS {asn}.")
-    pass
+    """Configures ExaBGP to peer with all border routers of a given AS."""
+    print(f"Configuring ExaBGP to peer with AS {asn}...")
+    
+    # This script is used to create veth pairs between containers.
+    connect_script = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'utils', 'autograder-25', 'connect_shadow_as.sh'))
+
+    # Get student's external connections to determine its IPs
+    student_ext_conns = mnet.get_exp_ext_conn(asn)
+    exabgp_conf_content = ""
+
+    for nb_name, r_name in mnet.NB_CONN.items():
+        # 1. Get neighbor details
+        nb_asn, nb_r = mnet.get_nb_asn_r(asn, nb_name)
+        
+        # 2. Determine IPs for both ends of the link
+        student_ip_with_prefix = student_ext_conns[r_name][0][3]
+        student_ip = student_ip_with_prefix.split('/')[0]
+
+        neighbor_ext_conns = mnet.get_exp_ext_conn(nb_asn)
+        exabgp_ip = ""
+        for conn in neighbor_ext_conns.get(nb_r, []):
+            if conn[0] == asn and conn[1] == r_name:
+                exabgp_ip_with_prefix = conn[3]
+                exabgp_ip = exabgp_ip_with_prefix.split('/')[0]
+                break
+        if not exabgp_ip:
+            print(f"  Could not find reverse connection for {nb_name} from AS {nb_asn}. Skipping.")
+            continue
+
+        # 3. Get container and interface names
+        student_r_ctn = mnet.get_r_ctn_name(asn, r_name)
+        intf_r_name, intf_exabgp_name = mnet.get_ext_intf_names(asn, nb_name)
+
+        # 4. Create veth pair and configure IPs
+        print(f"  Connecting {EXABGP_CTN_NAME} to {student_r_ctn} for neighbor {nb_name}")
+        
+        # Create veth pair
+        cmd_link = ["sudo", "bash", connect_script, "add_link", EXABGP_CTN_NAME, intf_exabgp_name, student_r_ctn, intf_r_name]
+        subprocess.run(cmd_link, check=True, capture_output=True)
+
+        # Configure IP on ExaBGP side
+        cmd_addr_exabgp = ["sudo", "bash", connect_script, "add_addr", EXABGP_CTN_NAME, exabgp_ip, intf_exabgp_name]
+        subprocess.run(cmd_addr_exabgp, check=True, capture_output=True)
+
+        # Configure IP on student router side
+        cmd_addr_student = ["sudo", "bash", connect_script, "add_addr", student_r_ctn, student_ip, intf_r_name]
+        subprocess.run(cmd_addr_student, check=True, capture_output=True)
+
+        # 5. Generate ExaBGP configuration snippet
+        nb_lo = mnet.get_exp_intf_ip("lo", nb_asn, nb_r)
+
+        exabgp_conf_content += f"neighbor {student_ip} {{\n"
+        exabgp_conf_content += f"    description '{nb_name}--{r_name}';\n"
+        exabgp_conf_content += f"    router-id {nb_lo};\n"
+        exabgp_conf_content += f"    local-address {exabgp_ip};\n"
+        exabgp_conf_content += f"    local-as {nb_asn};\n"
+        exabgp_conf_content += f"    peer-as {asn};\n"
+        exabgp_conf_content += "    family {\n"
+        exabgp_conf_content += "         ipv4 unicast;\n"
+        exabgp_conf_content += "    }\n"
+        if nb_asn not in mnet.IXP_ASNS:
+            exabgp_conf_content += "    static {\n"
+            exabgp_conf_content += f"         route {nb_asn}.0.0.0/8 next-hop self;\n"
+            exabgp_conf_content += "    }\n"
+        exabgp_conf_content += "}\n"
+
+    # 6. Write config and reload ExaBGP
+    with open(EXABGP_CONF_LOCAL_PATH, "w") as f:
+        f.write(exabgp_conf_content)
+
+    print("  Reloading ExaBGP configuration...")
+    exec_ctn(EXABGP_CTN_NAME, ["exabgpcli shutdown"], shell="bash")
+    time.sleep(1)
+    exec_ctn(EXABGP_CTN_NAME, [f"exabgp -e {EXABGP_ENV_CTN_PATH} {EXABGP_CONF_CTN_PATH} &"], shell="bash")
+    print(f"ExaBGP configured for AS {asn}.")
+
 
 def clear_exabgp_config():
     """Clears the ExaBGP configuration."""
