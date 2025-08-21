@@ -39,5 +39,7 @@ set -x
     sudo ip netns add testns
     sudo ip netns delete testns
 
+    pip install networkx docker
+
     exit 0
 }
