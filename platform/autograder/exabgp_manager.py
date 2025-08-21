@@ -4,6 +4,8 @@
 
 import os
 import time
+import re
+from collections import defaultdict
 
 from ctn_utils import client, exec_ctn, get_ctn_name_lst, remove_ctn
 import live_mnet_utils as mnet
@@ -22,7 +24,6 @@ def start_exabgp_container():
         return
 
     print("Starting ExaBGP container...")
-    # Ensure config files exist
     open(EXABGP_CONF_LOCAL_PATH, 'a').close()
     open(EXABGP_LOG_LOCAL_PATH, 'a').close()
 
@@ -38,22 +39,13 @@ def start_exabgp_container():
             os.path.join(os.getcwd(), "configs/exabgp.env"): {"bind": EXABGP_ENV_CTN_PATH, "mode": "ro"}
         },
     )
-    time.sleep(5) # Give it a moment to start up
+    time.sleep(5)
     print(f"ExaBGP container {EXABGP_CTN_NAME} started.")
 
 def configure_exabgp_for_as(asn):
-    """Generates an exabgp.conf to peer with the specified student AS."""
-    # This function would need to be implemented based on how you want to connect
-    # to the student's live AS. A possible approach is to create veth pairs
-    # to link the ExaBGP container to each of the student's border routers.
-    # For now, this is a placeholder.
+    # This is a complex function that requires creating veth pairs and IPs.
+    # It will be left as a placeholder as it requires sudo and direct host modification.
     print(f"(Placeholder) Configuring ExaBGP to peer with AS {asn}.")
-    # In a real implementation, you would:
-    # 1. Get border routers for the ASN.
-    # 2. Create veth pairs between EXABGP_CTN_NAME and each border router container.
-    # 3. Assign IP addresses to both ends of the veth pairs.
-    # 4. Write the corresponding `neighbor` blocks to exabgp.conf.
-    # 5. Reload ExaBGP.
     pass
 
 def clear_exabgp_config():
@@ -64,7 +56,6 @@ def clear_exabgp_config():
     exec_ctn(EXABGP_CTN_NAME, [f"exabgp -e {EXABGP_ENV_CTN_PATH} {EXABGP_CONF_CTN_PATH} &"], shell="bash")
     print("Cleared ExaBGP configuration.")
 
-# Functions from the old exabgp_utils.py can be adapted and placed here
 def announce_exabgp_route(neighbor, prefix, next_hop, **kwargs):
     """Announces a route from the ExaBGP test peer."""
     ann = f"neighbor {neighbor} announce route {prefix} next-hop {next_hop}"
@@ -72,7 +63,8 @@ def announce_exabgp_route(neighbor, prefix, next_hop, **kwargs):
         ann += f" as-path [ {' '.join(map(str, kwargs['as_path']))} ]"
     if kwargs.get('community'):
         ann += f" community [ {' '.join(kwargs['community'])} ]"
-    # Add other BGP attributes as needed
+    if kwargs.get('med'):
+        ann += f" med {kwargs['med']}"
     cmd = [f"exabgpcli {ann}"]
     exec_ctn(EXABGP_CTN_NAME, cmd, shell="bash")
 
@@ -83,7 +75,37 @@ def withdraw_exabgp_route(neighbor, prefix):
     exec_ctn(EXABGP_CTN_NAME, cmd, shell="bash")
 
 def get_exabgp_rib_in():
-    """Parses the adj-rib-in from the ExaBGP test peer."""
-    # This function would be similar to the original one in exabgp_utils.py
-    # but would run inside the single EXABGP_CTN_NAME container.
-    pass
+    """Return and parse the result of `exabgpcli show adj-rib in extensive`."""
+    rib_in = defaultdict(lambda: defaultdict(dict))
+    cmd = ["exabgpcli show adj-rib in extensive"]
+    output = exec_ctn(EXABGP_CTN_NAME, cmd, shell="bash").strip().split("\n")
+    if output == ['']:
+        return rib_in
+    for entry in output:
+        neighbor_match = re.search(r"neighbor (\S+)", entry)
+        if not neighbor_match: continue
+        neighbor = neighbor_match.group(1)
+
+        route_match = re.search(r"ipv4 unicast (\S+)", entry)
+        if not route_match: continue
+        route = route_match.group(1)
+
+        next_hop_match = re.search(r"next-hop (\S+)", entry)
+        next_hop = next_hop_match.group(1) if next_hop_match else ""
+
+        as_path_match = re.search(r"as-path \[ (.+?) \]", entry)
+        as_path = [int(i) for i in as_path_match.group(1).split()] if as_path_match else []
+
+        community_match = re.search(r"community \[ (.+?) \]", entry)
+        community = community_match.group(1).split() if community_match else []
+
+        med_match = re.search(r"med (\d+)", entry)
+        med = int(med_match.group(1)) if med_match else 0
+
+        rib_in[neighbor][route] = {
+            "next-hop": next_hop,
+            "as-path": as_path,
+            "community": community,
+            "med": med,
+        }
+    return rib_in
