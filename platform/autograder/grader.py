@@ -69,7 +69,7 @@ from exabgp_utils import (
     get_exabgp_rib_in,
     compare_route_preference,
 )
-# from sdas_utils import start_shadow_as, clear_shadow_as
+from sdas_utils import create_shadow_as, clear_shadow_as
 
 DUMP_CONFIG_SCRIPT = os.path.join(os.getcwd(), "parse_gitlab_config.sh")
 REPORT_DIR = f"reports/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
@@ -1428,98 +1428,320 @@ def check_rpki_invalid(asn, log_file=None):
         points = (check_count - vio_count) * 1.0 / check_count
     return points
 
-# --- Question Functions (Adapted from original grader.py) ---
 
 def q1_1(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
     print("\n#####Q1.1: L2 IP addresses, default gateway and VLAN.#####")
-    return check_l2_conn_in_dc(asn, dcn=True, dcs=True, log_file=log_file)
+    # percentage of ping loss among DCN hosts
+    points = check_l2_conn_in_dc(asn, dcn=False, dcs=True, log_file=log_file)
+    return points
+
 
 def q1_2(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
     print("\n#####Q1.2: L3 IP address and OSPF set up.#####")
+    # percentage of wrong L3 interfaces
     points_1 = check_l3_intf_config(asn, log_file=log_file)
+    points = points_1 * 0.5
+    # percentage of ping loss between L3 hosts and between L3 and L2 hosts
     points_2 = check_l3_dcn_host_conn(asn, log_file=log_file)
-    return points_1 * 0.5 + points_2 * 0.5
+    points += points_2 * 0.5
+    return points
+
 
 def q1_3(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
     print("\n#####Q1.3: OSPF load balancing.#####")
     points_1 = check_l3_load_balancing(
-        asn, "MILA", "MUNI",
+        cur_asn,
+        "MILA",
+        "MUNI",
         [["MILA", "MUNI"],["MILA", "ZURI", "MUNI"],["MILA", "ZURI", "FRAN", "MUNI"]],
-        log_file=log_file)
+        {
+            1: {f"{cur_asn}.0.11.2", f"{cur_asn}.0.12.2", f"{cur_asn}.0.3.2"},
+            2: {f"{cur_asn}.0.6.2", f"{cur_asn}.0.7.2", f"{cur_asn}.0.11.2"},
+            3: {f"{cur_asn}.0.11.2", f"{cur_asn}.0.7.2"},
+        },
+        log_file=log_file,
+    )
+    points = points_1 * 0.5
     points_2 = check_l3_load_balancing(
-        asn, "MUNI", "MILA",
+        asn,
+        "MUNI",
+        "MILA",
         [["MUNI", "MILA"],["MUNI", "ZURI", "MILA"],["MUNI", "FRAN", "ZURI", "MILA"]],
-        log_file=log_file)
-    return (points_1 + points_2) / 2
+        {
+            1: {f"{cur_asn}.0.7.1", f"{cur_asn}.0.11.1"},
+            2: {f"{cur_asn}.0.6.1", f"{cur_asn}.0.2.1", f"{cur_asn}.0.1.1"},
+            3: {f"{cur_asn}.0.1.1", f"{cur_asn}.0.2.1"},
+        },
+        log_file=log_file,
+    )
+    points += points_2 * 0.5
+    return points
+
 
 def q1_4(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
     print("\n#####Q1.4: IPv6 address and tunnel.#####")
+    # percentage of ping loss among dcn and dcs hosts (not cross dc)
     points_1 = check_l2_conn_in_dc(asn, v6=True, dcn=True, dcs=True, log_file=log_file)
+    points = points_1 * 0.5
+    # percentage of ping loss across dc
     points_2 = check_across_dc_v6_conn(asn, log_file=log_file)
-    return points_1 * 0.5 + points_2 * 0.5
+    points += points_2 * 0.5
+    return points
+
 
 def q2_1(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
     print("\n#####Q2.1: iBGP full mesh.#####")
-    return check_ibgp_full_mesh(asn, log_file=log_file)
+    # percentage of iBGP sessions
+    points = check_ibgp_full_mesh(asn, log_file=log_file)
+    return points * 0.5
+
 
 def q2_2(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
     print("\n#####Q2.2: eBGP sessions.#####")
+    # percentage of iBGP sessions
     points_1 = check_as_intf_config(asn, log_file=log_file)
+    points = points_1 * 0.25
+    # percentage of sending out own prefix
     points_2 = check_nb_route_send_rcv(asn, log_file=log_file)
-    return points_1 * 0.5 + points_2 * 0.5
+    points += points_2 * 0.25
+    return points
+
 
 def q2_3(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
-    print("\n#####Q2.3: local preference and no transit.#####")
+    print("\n#####Q2.3: local preference (0.5) and no transit (1.5).#####")
+    # percentage of correct total preference
     points_1 = check_route_preference(
         asn,
         ["PROV2", "PROV1", "IXP", "PEER1", "CUST2", "CUST1", ""],
         {
-            "": ["CUST1", "CUST2"], "CUST1": ["CUST2"], "CUST2": ["PEER1", "IXP"],
-            "PEER1": ["IXP"], "IXP": ["PROV1", "PROV2"], "PROV1": ["PROV2"], "PROV2": [],
+            "": ["CUST1", "CUST2"],
+            "CUST1": ["CUST2"],
+            "CUST2": ["PEER1", "IXP"],
+            "PEER1": ["IXP"],
+            "IXP": ["PROV1", "PROV2"],
+            "PROV1": ["PROV2"],
+            "PROV2": [],
         },
         log_file=log_file,
     )
+    points = points_1 * 0.5
+    # percentage of correct transit
     points_2 = check_nb_transit_rules(asn, log_file=log_file)
-    return points_1 * 0.5 + points_2 * 1.25
+    points += points_2 * 1.25
+    return points
+
 
 def q2_4(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
     print("\n#####Q2.4: IXP community and filter.#####")
+    # correct ixp community
     points_1 = check_ixp_community(asn, log_file=log_file)
+    points = points_1 * 0.5
     points_2 = check_ixp_transit(asn, log_file=log_file)
-    return points_1 * 0.5 + points_2 * 0.5
+    points += points_2 * 0.5
+    return points
+
 
 def q2_5(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
-    print("\n#####Q2.5: inbound preference.#####")
-    return check_inbound_preference(asn, log_file=log_file)
+    print("\n#####Q2.5: inbound preferench.#####")
+    points_1 = check_inbound_preference(asn, log_file=log_file)
+    if asn % 2 == 0:
+        points_2 = check_route_preference(
+            asn,
+            ["PROV1", "PROV2", "CUST1", "CUST2", ""],
+            {
+                "": ["CUST2"],
+                "CUST2": ["CUST1"],
+                "CUST1": ["PROV2"],
+                "PROV2": ["PROV1"],
+                "PROV1": [],
+            },
+            log_file=log_file,
+        )
+    else:
+        points_2 = check_route_preference(
+            asn,
+            ["PROV2", "PROV1", "CUST2", "CUST1", ""],
+            {
+                "": ["CUST1"],
+                "CUST1": ["CUST2"],
+                "CUST2": ["PROV1"],
+                "PROV1": ["PROV2"],
+                "PROV2": [],
+            },
+            log_file=log_file,
+        )
+    points = points_1 * 0.5 + points_2 * 0.5
+    return points
+
 
 def q2_6(asn, log_file=None):
     print = partial(new_print, log_file=log_file)
     print("\n#####Q2.6: RPKI.#####")
-    points_1 = check_rpki_not_found(asn, log_file=log_file)
-    points_2 = check_rpki_invalid(asn, log_file=log_file)
-    return points_1 * 0.5 + points_2 * 0.5
+    # the list is from one routinator
+    if asn in {}:
+        points_1 = 0.0
+    else:
+        points_1 = 1.0
+    points = points_1 * 0.25
+    points += check_rpki_not_found(asn, log_file=log_file) * 0.25
+    points += check_rpki_invalid(asn, log_file=log_file) * 0.5
+    return points
 
-def run_all_checks_for_as(asn, log_file):
-    """Runs the full suite of grading checks for a single ASN."""
-    total_points = []
-    questions = [
-        q1_1, q1_2, q1_3, q1_4,
-        q2_1, q2_2, q2_3, q2_4, q2_5, q2_6
-    ]
-    for question in questions:
-        try:
-            points = question(asn, log_file=log_file)
-            total_points.append(points)
-        except Exception as e:
-            new_print(f"Error running {question.__name__} for AS {asn}: {e}", log_file=log_file)
-            total_points.append(0)
-    return total_points
+def q2_7(asn, log_file=None):
+    print = partial(new_print, log_file=log_file)
+    print("\n#####Q2.7: VPN.#####")
+    secrets = {}
+    with open("./configs/secrets.txt") as f:
+        lines = f.readlines()
+        for line in lines:
+            group,secret = line.strip().split(":")
+            secrets[int(group)] = secret.strip()
+    with open(f"./gitlab_configs/group{asn}/secret.txt") as f:
+        answer = f.readlines()
+        for i,line in enumerate(answer):
+            if line.strip() == secrets[asn]:
+                points = 0.25
+                break
+            else:
+                points = 0
+                print(f"line {i}: {line}")
+    return points
+
+
+    
+
+
+if __name__ == "__main__":
+    asn_path = sys.argv[1]
+    only_check = True if "--onlycheck" in sys.argv else False
+    # parse --option
+    date_str = datetime.now().strftime("%m-%d-%H-%M")
+    # get saved_config
+    if not only_check:
+        clear_shadow_as()
+        time.sleep(5)
+        # # delete old config copy
+        # if os.path.exists("gitlab_configs_copy"):
+        #     subprocess.check_call(["rm", "-rf", "gitlab_configs_copy"]) 
+        #     subprocess.check_call(["cp", "-r", "gitlab_configs", "gitlab_configs_copy"])
+    # subprocess.check_call(["bash", DUMP_CONFIG_SCRIPT])
+    # time.sleep(DUMP_WAIT)
+    # print("Saved config downloaded.\n")
+    # if there is an --onlycheck flag, do not clear the shadow as
+    # asn_path = "asn_path.txt"
+    with open(asn_path, "r") as f:
+        asn_lst = [int(asn) for asn in f.read().split()]
+    # clear_shadow_as()
+    # os.makedirs(os.path.join(REPORT_DIR, f"report_{date_str}"), exist_ok=True)
+    # create the report directory
+    # copy the gitlab config dir as the original config will be overwritten by containers
+    os.makedirs(REPORT_DIR, exist_ok=False)
+    for cur_asn in asn_lst:
+        seed = 138
+        random.seed(seed)
+        # sys.stdout = Logger(log_file=f"report_{date_str}/report_g{cur_asn}.txt")
+        log_file = os.path.join(REPORT_DIR, f"g{cur_asn}.txt")
+        with open(log_file, "w") as f:
+            # clear old log
+            pass
+        print = partial(new_print, log_file=log_file)
+        start_time = time.time()
+        print(f"############# Analyzing AS {cur_asn} " + "################")
+        print(f"Seed: {seed}")
+        if not only_check:
+            # clear_shadow_as()
+            # time.sleep(20)
+            create_shadow_as(cur_asn)
+        time.sleep(5)
+        total_points = []
+        for question in [q1_1,q1_2,q1_3,q1_4,q2_1,q2_2,q2_3,q2_4,q2_5,q2_6]:
+            total_points.append(question(cur_asn,log_file=log_file))
+
+            # check_l2_conn_in_dc(cur_asn, log_file=log_file),
+            # check_l3_intf_config(cur_asn, log_file=log_file),
+            # check_l3_dcn_host_conn(cur_asn, log_file=log_file),
+            # (
+            #     check_l3_load_balancing(
+            #         cur_asn,
+            #         "ZURI",
+            #         "LUGA",
+            #         [
+            #             ["ZURI", "LUCE", "LUGA"],
+            #             ["ZURI", "BERN", "LAUS", "LUGA"],
+            #         ],
+            #         {
+            #             1: {f"{cur_asn}.0.1.2", f"{cur_asn}.0.2.2"},
+            #             2: {
+            #                 f"{cur_asn}.0.6.2",
+            #                 f"{cur_asn}.0.7.2",
+            #                 f"{cur_asn}.0.11.2",
+            #             },
+            #             3: {f"{cur_asn}.0.11.2", f"{cur_asn}.0.7.2"},
+            #         },
+            #         log_file=log_file,
+            #     )
+            #     + check_l3_load_balancing(
+            #         cur_asn,
+            #         "LUGA",
+            #         "ZURI",
+            #         [
+            #             ["LUGA", "LUCE", "ZURI"],
+            #             ["LUGA", "LAUS", "BERN", "ZURI"],
+            #         ],
+            #         {
+            #             1: {f"{cur_asn}.0.7.1", f"{cur_asn}.0.11.1"},
+            #             2: {f"{cur_asn}.0.6.1", f"{cur_asn}.0.2.1", f"{cur_asn}.0.1.1"},
+            #             3: {f"{cur_asn}.0.1.1", f"{cur_asn}.0.2.1"},
+            #         },
+            #         log_file=log_file,
+            #     )
+            # )
+            # // 2,
+            # check_l2_conn_in_dc(cur_asn, v6=True, dcs=True, log_file=log_file),
+            # check_across_dc_v6_conn(cur_asn, log_file=log_file),
+            # # # as long as there is ipv6 connection, the path does not matter
+            # # # check_dc_traffic_use_link(cur_asn, "ZURI-LUCE"),
+            # check_ibgp_full_mesh(cur_asn, log_file=log_file),
+            # check_as_intf_config(cur_asn, log_file=log_file),
+            # check_nb_route_send_rcv(cur_asn, log_file=log_file),
+            # check_route_preference(cur_asn, log_file=log_file),
+            # check_nb_transit_rules(cur_asn, log_file=log_file),
+            # check_ixp_transit(cur_asn, log_file=log_file),
+            # check_inbound_preference(cur_asn, log_file=log_file),
+            # check_rpki_invalid(cur_asn, log_file=log_file),
+        time_lapse = time.time() - start_time
+
+        # print points for each task
+        print(f"\n############# Grades for AS {cur_asn} " + "##############")
+        for q, p in enumerate(total_points):
+            if q <= 3:
+                print(f"    Task 1.{q+1}: {p}")
+            else:
+                print(f"    Task 2.{q-3}: {p}")
+        # grader = math.ceil((sum(total_points) / 10.0) * 6 * 4) / 4
+        grade = (1.0 + sum(total_points) / 2)
+        print(f"    Grade: {grade}")
+
+        print(
+            "############# Analyzing AS {} takes {:.3}s  ".format(cur_asn, time_lapse)
+            + "#############"
+        )
+        print()
+
+    # subprocess.check_call(
+    #     [
+    #         "sudo",
+    #         "cp",
+    #         "./grader.log",
+    #         f"{REPORT_DIR}/grader-{date_str}.log",
+    #     ]
+    # )

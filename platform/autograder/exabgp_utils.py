@@ -6,20 +6,8 @@ import re
 from collections import defaultdict
 from ctn_utils import exec_ctn
 from other_utils import new_print
-# from sdas_utils import get_shadow_ctn_name
-from mnet_utils import get_r_ctn_name, get_h_ctn_name, get_s_ctn_name, SD_CTN_PREFIX
+from sdas_utils import get_shadow_ctn_name
 
-
-def get_shadow_ctn_name(name, ctn_type=""):
-    """Return the shadow router container name."""
-    if ctn_type == "router":
-        return get_r_ctn_name(SD_CTN_PREFIX, name)
-    elif ctn_type == "host":
-        return get_h_ctn_name(SD_CTN_PREFIX, name)
-    elif ctn_type == "switch":
-        return get_s_ctn_name(SD_CTN_PREFIX, name)
-    else:
-        return f"{SD_CTN_PREFIX}_{name}"
 
 def announce_exabgp_route(
     neighbor, prefix, next_hop, local_pref=None, med=None, community=None, as_path=None

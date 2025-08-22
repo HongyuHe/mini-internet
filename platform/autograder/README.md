@@ -1,17 +1,14 @@
-# Live Autograder System
+### How to run a batch of group configs
 
-This autograder is designed to test student AS configurations in a live, running Mini-Internet environment. It does **not** create or destroy student containers.
+1. fill the list of group numbers in `asn_all.txt`, the full group list can be found in `complete_asns.txt`
+2. run `python3 pull_and_parse_gitlab_configs.py`, it clones gitlab configs to `gitlab_configs` and parse
+3. manually move actual configs under `groupX/`, and record the config date shown in the config folder/tar in the google doc, if there is no tar or nested folder, use the last commit date
+4. `cd gitlab_configs` and run `./scripts.sh` to replace correct switch or L2 host folders from `history_config/`
+5. backup `gitlab_configs` to `gitlab_configs_backup` 
+6. run `./parse_gitlab_config.sh` to parse the configs again
+7. run `./start_grader.sh asn_all.txt` to grade all groups.
 
-## Core Components
 
-- **`run_live_grader.py`**: The main entry point for the grading system. It initializes the ExaBGP test peer and iterates through the list of student ASNs to grade each one.
+### TODO
 
-- **`live_grader.py`**: Contains the main grading logic, with functions for each specific check (e.g., L2/L3 connectivity, BGP policies, RPKI). It's adapted from the original `grader.py`.
-
-- **`exabgp_manager.py`**: A new module responsible for managing the ExaBGP test peer. It starts the container, dynamically configures it to peer with the student AS currently under test, and provides functions to announce/withdraw test routes.
-
-- **`live_mnet_utils.py`**: A modified version of the original `mnet_utils.py`. This is a critical component. All functions that interact with containers have been updated to target the live student containers (e.g., `3_ZURIrouter`) instead of a temporary shadow container.
-
-- **`ctn_utils.py` / `other_utils.py`**: Utility libraries for Docker interaction and other helper functions, mostly unchanged from the original.
-
-- **`configs/`**: A directory containing necessary configuration files for the grader, such as the AS-level link definitions.
+- [ ] change `unsafe-vrps` to `"accept"` in routinator image
