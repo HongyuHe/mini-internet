@@ -281,7 +281,7 @@ def get_exp_intf_ip(addr_type, asn, r_name, other_r_name=""):
 def get_r_ctn_name(asn, r_name):
     """Return the ctn name of a router."""
     # TODO: better format default asn
-    asn = SD_CTN_PREFIX
+    # asn = SD_CTN_PREFIX
     assert r_name in REGION_NAMES
     return f"{asn}_{r_name}router"
 
