@@ -1675,9 +1675,9 @@ if __name__ == "__main__":
         print(f"\n############# Grades for AS {cur_asn} " + "##############")
         for q, p in enumerate(total_points):
             if q <= 3:
-                print(f"    Task 1.{q+1}: {p}")
+                print(f"    Task 1.{q+1}: {p:.2f}")
             else:
-                print(f"    Task 2.{q-3}: {p}")
+                print(f"    Task 2.{q-3}: {p:.2f}")
         # grader = math.ceil((sum(total_points) / 10.0) * 6 * 4) / 4
         grade = (1.0 + sum(total_points) / 2)
         print(f"    Grade: {grade}")

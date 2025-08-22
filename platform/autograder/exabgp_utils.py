@@ -45,7 +45,10 @@ def get_exabgp_rib_in():
         # not receive route from student as
         return rib_in
     for entry in output:
-        neighbor = re.search(r"neighbor (\S+)", entry).group(1)
+        neighbor = re.search(r"neighbor (\S+)", entry)
+        if neighbor is None:
+            continue
+        neighbor = neighbor.group(1)
         route = re.search(r"ipv4 unicast (\S+)", entry).group(1)
         next_hop_match = re.search(r"next-hop (\S+)", entry)
         next_hop = next_hop_match.group(1) if next_hop_match else ""
