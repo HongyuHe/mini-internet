@@ -16,6 +16,7 @@ import shutil
 
 from other_utils import Logger, new_print
 from mnet_utils import (
+    SD_CTN_PREFIX,
     L2_COMP_NAME_1,
     L2_COMP_NAME_2,
     L2_DCN_GW_R,
@@ -1646,6 +1647,8 @@ if __name__ == "__main__":
     # copy the gitlab config dir as the original config will be overwritten by containers
     os.makedirs(REPORT_DIR, exist_ok=False)
     for cur_asn in asn_lst:
+        SD_CTN_PREFIX = cur_asn
+        
         seed = 138
         random.seed(seed)
         # sys.stdout = Logger(log_file=f"report_{date_str}/report_g{cur_asn}.txt")
@@ -1665,59 +1668,6 @@ if __name__ == "__main__":
         total_points = []
         for question in [q1_1,q1_2,q1_3,q1_4,q2_1,q2_2,q2_3,q2_4,q2_5,q2_6]:
             total_points.append(question(cur_asn,log_file=log_file))
-
-            # check_l2_conn_in_dc(cur_asn, log_file=log_file),
-            # check_l3_intf_config(cur_asn, log_file=log_file),
-            # check_l3_dcn_host_conn(cur_asn, log_file=log_file),
-            # (
-            #     check_l3_load_balancing(
-            #         cur_asn,
-            #         "ZURI",
-            #         "LUGA",
-            #         [
-            #             ["ZURI", "LUCE", "LUGA"],
-            #             ["ZURI", "BERN", "LAUS", "LUGA"],
-            #         ],
-            #         {
-            #             1: {f"{cur_asn}.0.1.2", f"{cur_asn}.0.2.2"},
-            #             2: {
-            #                 f"{cur_asn}.0.6.2",
-            #                 f"{cur_asn}.0.7.2",
-            #                 f"{cur_asn}.0.11.2",
-            #             },
-            #             3: {f"{cur_asn}.0.11.2", f"{cur_asn}.0.7.2"},
-            #         },
-            #         log_file=log_file,
-            #     )
-            #     + check_l3_load_balancing(
-            #         cur_asn,
-            #         "LUGA",
-            #         "ZURI",
-            #         [
-            #             ["LUGA", "LUCE", "ZURI"],
-            #             ["LUGA", "LAUS", "BERN", "ZURI"],
-            #         ],
-            #         {
-            #             1: {f"{cur_asn}.0.7.1", f"{cur_asn}.0.11.1"},
-            #             2: {f"{cur_asn}.0.6.1", f"{cur_asn}.0.2.1", f"{cur_asn}.0.1.1"},
-            #             3: {f"{cur_asn}.0.1.1", f"{cur_asn}.0.2.1"},
-            #         },
-            #         log_file=log_file,
-            #     )
-            # )
-            # // 2,
-            # check_l2_conn_in_dc(cur_asn, v6=True, dcs=True, log_file=log_file),
-            # check_across_dc_v6_conn(cur_asn, log_file=log_file),
-            # # # as long as there is ipv6 connection, the path does not matter
-            # # # check_dc_traffic_use_link(cur_asn, "ZURI-LUCE"),
-            # check_ibgp_full_mesh(cur_asn, log_file=log_file),
-            # check_as_intf_config(cur_asn, log_file=log_file),
-            # check_nb_route_send_rcv(cur_asn, log_file=log_file),
-            # check_route_preference(cur_asn, log_file=log_file),
-            # check_nb_transit_rules(cur_asn, log_file=log_file),
-            # check_ixp_transit(cur_asn, log_file=log_file),
-            # check_inbound_preference(cur_asn, log_file=log_file),
-            # check_rpki_invalid(cur_asn, log_file=log_file),
         time_lapse = time.time() - start_time
 
         # print points for each task
