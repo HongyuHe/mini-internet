@@ -15,8 +15,8 @@ from datetime import datetime
 import shutil
 
 from other_utils import Logger, new_print
+import mnet_utils
 from mnet_utils import (
-    SD_CTN_PREFIX,
     L2_COMP_NAME_1,
     L2_COMP_NAME_2,
     L2_DCN_GW_R,
@@ -1647,7 +1647,8 @@ if __name__ == "__main__":
     # copy the gitlab config dir as the original config will be overwritten by containers
     os.makedirs(REPORT_DIR, exist_ok=False)
     for cur_asn in asn_lst:
-        SD_CTN_PREFIX = f"{cur_asn}"
+        #! Overwrite the shadow AS name
+        mnet_utils.SD_CTN_PREFIX = f"{cur_asn}"
         
         seed = 138
         random.seed(seed)
