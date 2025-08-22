@@ -1627,9 +1627,9 @@ if __name__ == "__main__":
     # parse --option
     date_str = datetime.now().strftime("%m-%d-%H-%M")
     # get saved_config
-    if not only_check:
-        clear_shadow_as()
-        time.sleep(5)
+    # if not only_check:
+    #     clear_shadow_as()
+    #     time.sleep(5)
         # # delete old config copy
         # if os.path.exists("gitlab_configs_copy"):
         #     subprocess.check_call(["rm", "-rf", "gitlab_configs_copy"]) 
@@ -1647,7 +1647,7 @@ if __name__ == "__main__":
     # copy the gitlab config dir as the original config will be overwritten by containers
     os.makedirs(REPORT_DIR, exist_ok=False)
     for cur_asn in asn_lst:
-        SD_CTN_PREFIX = cur_asn
+        SD_CTN_PREFIX = f"{cur_asn}"
         
         seed = 138
         random.seed(seed)
