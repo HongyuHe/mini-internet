@@ -13,7 +13,7 @@ DOCKERHUB_PREFIX="miniinterneteth/"
 # This URL will be suggested as the default location for students
 # to download their configs. It should be publicly accessible via ssh at port
 # 2000 + X, where X is each AS number.
-SSH_URL="clnode178.clemson.cloudlab.us"
+SSH_URL="hecate.princeton.edu"
 
 # =============================================================================
 # WEBSERVER
@@ -23,7 +23,7 @@ SSH_URL="clnode178.clemson.cloudlab.us"
 # You need to specify the hostname of the server and an email for
 # LetsEncrypt to be enabled.
 # UPDATE THOSE VARIABLES. WEBSERVER_HOSTNAME -> hostname of the server and EMAIL -> empty string (for http)
-WEBSERVER_HOSTNAME="clnode178.clemson.cloudlab.us"
+WEBSERVER_HOSTNAME="hecate.princeton.edu"
 WEBSERVER_ACME_MAIL=""
 # Hostname and ports for the webserver and krill on the host.
 # (must be publicly available)
@@ -31,7 +31,7 @@ WEBSERVER_ACME_MAIL=""
 WEBSERVER_PORT_HTTP="80"
 WEBSERVER_PORT_HTTPS="443"
 # Use the one you want, make sure to make it reachable from outside.
-WEBSERVER_PORT_KRILL="3000"
+WEBSERVER_PORT_KRILL="4000"
 # Put your timezone here.
 WEBSERVER_TZ="America/Denver"
 # If you want to use the files from the docker image, set this variable to "":

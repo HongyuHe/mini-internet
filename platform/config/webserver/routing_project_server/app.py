@@ -48,7 +48,7 @@ config_defaults = {
     'BASIC_AUTH_USERNAME': 'admin',
     'BASIC_AUTH_PASSWORD': 'admin',
     'HOST': '127.0.0.1',
-    'PORT': 8000,
+    'PORT': 9000,
     # Background processing for resource-intensive tasks.
     'BACKGROUND_WORKERS': False,
     'AUTO_START_WORKERS': True,
