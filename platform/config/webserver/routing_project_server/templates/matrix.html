@@ -8,7 +8,8 @@
 style="background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, white 4px, white 6px);"
 {%- endif %}
 {%- endmacro %}
-{% macro stacknumber(asn) -%}
+{% macro stacknumber(asn, nicknames) -%}
+{% if nicknames.get(asn) %}<span class="text-xs font-thin -mb-1">{{ nicknames[asn] }}</span>{% endif %}
 {% if asn >= 100 -%}<span style="margin-bottom:-0.25rem">{{ asn // 100}}</span>{% endif %}
 {% if asn >= 10 -%}<span style="margin-bottom:-0.25rem">{{ (asn % 100) // 10}}</span>{% endif %}
 <span>{{ asn % 10}}</span>
@@ -149,13 +150,15 @@ function toggle(){
 		<div class="border border-white/50 text-center self-end">AS</div>
 		{% for asn in (connectivity|sort) %}
 		<div class="border border-white/50 text-center even:bg-neutral-200 flex flex-col justify-end">
-			{{ stacknumber(asn) }}
+			{{ stacknumber(asn, as_nicknames) }}
 		</div>
 		{% endfor %}
 		<!-- content rows -->
 		<!-- Add a little padding to ASN to make it look nicer. -->
 		{% for asn in connectivity|sort %}
-		<div class="border border-white/50 even:bg-neutral-200 text-right pr-1">{{asn}}</div>
+		<div class="border border-white/50 even:bg-neutral-200 text-right pr-1">
+            {% if as_nicknames.get(asn) %}{{ as_nicknames[asn] }} {% endif %}{{asn}}
+        </div>
 		{% for asn_dst in connectivity[asn]|sort %}
 		{% if not connectivity[asn][asn_dst] %}
 		<div class="border border-white/50 bg-[#d5605e] notreachable" title="AS{{asn}}&rarr;AS{{asn_dst}}: Not Reachable"

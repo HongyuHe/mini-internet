@@ -222,6 +222,23 @@ def parse_matrix_stats(filename: os.PathLike):
     )
 
 
+def parse_as_nicknames(filename: os.PathLike) -> Dict[int, str]:
+    """Parse a CSV file with AS nicknames."""
+    nicknames = {}
+    try:
+        with open(Path(filename)) as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header
+            for row in reader:
+                if row:
+                    nicknames[int(row[0])] = row[1]
+    except FileNotFoundError:
+        print(f"AS nicknames file not found at {filename}, skipping.")
+    except Exception as e:
+        print(f"Error parsing AS nicknames file: {e}")
+    return nicknames
+
+
 def _read_json_safe(filename: os.PathLike, sleep_time=0.01, max_attempts=200):
     """Read a json file, waiting if the file is currently modified."""
     path = Path(filename)

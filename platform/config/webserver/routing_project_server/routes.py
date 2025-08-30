@@ -23,13 +23,13 @@ def index():
 def connectivity_matrix():
     """Create the connectivity matrix."""
     # Prepare matrix data (or load if using background workers).
-    updated, frequency, connectivity, validity = prepare_matrix(current_app.config)
+    updated, frequency, connectivity, validity, as_nicknames = prepare_matrix(current_app.config)
 
     if 'raw' in request.args:
         # Only send json data
         return jsonify(
             last_updated=updated, update_frequency=frequency,
-            connectivity=connectivity, validity=validity,
+            connectivity=connectivity, validity=validity, as_nicknames=as_nicknames
         )
 
     # Compute percentages as well.
@@ -56,6 +56,7 @@ def connectivity_matrix():
         connectivity=connectivity, validity=validity,
         valid=valid, invalid=invalid, failure=failure,
         last_updated=updated, update_frequency=frequency,
+        as_nicknames=as_nicknames
     )
     
 @main_bp.route("/looking-glass")

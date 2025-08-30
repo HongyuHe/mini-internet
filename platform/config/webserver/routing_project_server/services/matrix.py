@@ -22,7 +22,7 @@ def prepare_matrix(config, worker=False):
             with open(cache_file, 'rb') as file:
                 return pickle.load(file)
         except FileNotFoundError:
-            return (None, None, {}, {})
+            return (None, None, {}, {}, {})
 
     # Load all required files.
     as_data = parsers.parse_as_config(
@@ -41,6 +41,9 @@ def prepare_matrix(config, worker=False):
     last_updated, update_frequency = parsers.parse_matrix_stats(
         config['LOCATIONS']['matrix_stats']
     )
+    as_nicknames = parsers.parse_as_nicknames(
+        config['LOCATIONS']['as_nicknames']
+    )
 
     # Compute results
     connectivity = check_connectivity(
@@ -48,7 +51,7 @@ def prepare_matrix(config, worker=False):
     validity = check_validity(
         as_data, connection_data, looking_glass_data)
 
-    results = (last_updated, update_frequency, connectivity, validity)
+    results = (last_updated, update_frequency, connectivity, validity, as_nicknames)
 
     if config["BACKGROUND_WORKERS"] and worker:
         os.makedirs(cache_file.parent, exist_ok=True)
