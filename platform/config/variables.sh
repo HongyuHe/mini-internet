@@ -27,6 +27,7 @@ WEBSERVER_HOSTNAME="hecate.princeton.edu"
 WEBSERVER_ACME_MAIL=""
 # Hostname and ports for the webserver and krill on the host.
 # (must be publicly available)
+WEBSERVER_PORT="9000"
 # you can change http and https ports, but letsencrypt won't work, so its not recommended.
 WEBSERVER_PORT_HTTP="80"
 WEBSERVER_PORT_HTTPS="443"
@@ -111,7 +112,7 @@ HISTORY_FORGET_BINARIES="true"
 # =============================================================================
 
 # Enable/Disable VPN
-VPN_ENABLED=true
+VPN_ENABLED=false
 
 # Enable/Disable DNS for wireguard clients
 VPN_DNS_ENABLED=true

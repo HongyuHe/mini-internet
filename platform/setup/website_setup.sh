@@ -52,6 +52,8 @@ else
     KRILL_SCHEME="http"
 fi
 
+echo "Using webserver port ${WEBSERVER_PORT} and krill port ${WEBSERVER_PORT_KRILL}"
+
 # Write the webserver config file
 cat > "$CONFIGFILE" << EOM
 LOCATIONS = {
@@ -71,7 +73,7 @@ BASIC_AUTH_USERNAME = 'admin'
 BASIC_AUTH_PASSWORD = 'admin'
 BACKGROUND_WORKERS = True
 HOST = '0.0.0.0'
-PORT = 8000
+PORT = ${WEBSERVER_PORT}
 VPN_ENABLED = ${VPN_WEBSITE_ENABLED^}
 VPN_NO_CLIENTS = ${VPN_NO_CLIENTS}
 CHATBOT_INTEGRATION = ${CHATBOT_INTEGRATION^}
@@ -89,7 +91,7 @@ fi
 # We only have one webserver; traffic for any hostname will go to it.
 # NOTE: Can we define all dynamic labels for krill here?
 docker run -itd --name="WEB" --cpus=2 \
-    --network="bridge" -p 8000:8000 \
+    --network="bridge" -p ${WEBSERVER_PORT}:${WEBSERVER_PORT} \
     --pids-limit 100 \
     -v ${DATADIR}:${DATADIR_SERVER} \
     -v ${CONFIGDIR}:${CONFIGDIR_SERVER} \
@@ -102,7 +104,8 @@ docker run -itd --name="WEB" --cpus=2 \
     "${additional_args[@]}" \
     --hostname="web" \
     --privileged \
-    "${DOCKERHUB_PREFIX}d_webserver" > /dev/null
+    "webserver" > /dev/null
+    # "${DOCKERHUB_PREFIX}d_webserver" > /dev/null
 
 # Next start the proxy
 # Setup based on the following tutorials:
@@ -113,18 +116,18 @@ docker run -itd --name="WEB" --cpus=2 \
 # The dashboard is then available at http://localhost:8080/dashboard/
 # If anything goes wrong, add "--log.level=DEBUG" to enable logging,
 # and then use "sudo docker logs PROXY" to see the logs.
-docker run -d --name='PROXY' --network="bridge" \
-    -p ${WEBSERVER_PORT_HTTP}:${WEBSERVER_PORT_HTTP} \
-    -p ${WEBSERVER_PORT_HTTPS}:${WEBSERVER_PORT_HTTPS} \
-    -p ${WEBSERVER_PORT_KRILL}:${WEBSERVER_PORT_KRILL} \
-    -v "/var/run/docker.sock:/var/run/docker.sock:ro" \
-    -v ${LETSENCRYPT}:/letsencrypt \
-    --privileged \
-    traefik:v2.6 \
-    "--providers.docker=True" \
-    "--providers.docker.network=bridge" \
-    "--providers.docker.exposedbydefault=false" ${TLSCONF[@]} \
-    "--providers.docker.defaultRule=Host(\"${WEBSERVER_HOSTNAME}\")" \
-    "--entrypoints.web.address=:${WEBSERVER_PORT_HTTP}" \
-    "--entrypoints.websecure.address=:${WEBSERVER_PORT_HTTPS}" \
-    "--entrypoints.krill.address=:${WEBSERVER_PORT_KRILL}" > /dev/null
+# docker run -d --name='PROXY' --network="bridge" \
+#     -p ${WEBSERVER_PORT_HTTP}:${WEBSERVER_PORT_HTTP} \
+#     -p ${WEBSERVER_PORT_HTTPS}:${WEBSERVER_PORT_HTTPS} \
+#     -p ${WEBSERVER_PORT_KRILL}:${WEBSERVER_PORT_KRILL} \
+#     -v "/var/run/docker.sock:/var/run/docker.sock:ro" \
+#     -v ${LETSENCRYPT}:/letsencrypt \
+#     --privileged \
+#     traefik:v2.6 \
+#     "--providers.docker=True" \
+#     "--providers.docker.network=bridge" \
+#     "--providers.docker.exposedbydefault=false" ${TLSCONF[@]} \
+#     "--providers.docker.defaultRule=Host(\"${WEBSERVER_HOSTNAME}\")" \
+#     "--entrypoints.web.address=:${WEBSERVER_PORT_HTTP}" \
+#     "--entrypoints.websecure.address=:${WEBSERVER_PORT_HTTPS}" \
+#     "--entrypoints.krill.address=:${WEBSERVER_PORT_KRILL}" > /dev/null

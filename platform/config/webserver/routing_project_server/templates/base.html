@@ -18,7 +18,7 @@
 <head>
     {% block head %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='favicon.ico')}}">
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='favicon_pu.ico')}}">
     <link rel="stylesheet" href={{url_for('static', filename='style.css' )}}>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -38,7 +38,7 @@
             <div class="flex items-center flex-shrink-0 mr-6 text-3xl">
                 <img class=" h-16 pr-4" alt="logo" src="{{url_for('static', filename='logo.svg')}}" />
                 <!-- <span class="text-gray-400 pr-2">></span> -->
-		<span>routing project</span>
+		<span>COS461/ECE471 Routing Project</span>
             </div>
 	    </a>
             <!-- Menu -->
@@ -48,7 +48,7 @@
                 <a class="block mt-4 lg:inline-block lg:mt-0 hover:font-bold mr-4 text-lg" href="{{url_for(endpoint)}}"
                     }}>
                     <span class="pr-2 pl-2">
-                        <span class="text-gray-400">[</span>{{'🞸' if endpoint == request.endpoint else ' '}}<span
+                        <span class="text-gray-400">[</span>{{'☑️' if endpoint == request.endpoint else ' '}}<span
                             class="text-gray-400">]</span></span>{{name}}
                 </a>
             </div>
