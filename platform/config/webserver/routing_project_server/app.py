@@ -43,7 +43,7 @@ config_defaults = {
         "vpn_folder":"wireguard",
         "vpn_passwd":"../../../groups/passwords.txt",
         "vpn_db":"../../../groups/vpn.db",
-        "as_nicknames": "../../../config/as_nicknames.csv"
+        "as_nicknames": "../../../groups/as_nicknames.csv"
     },
     'KRILL_URL': "http://{hostname}:3000/index.html",
     'BASIC_AUTH_USERNAME': 'admin',

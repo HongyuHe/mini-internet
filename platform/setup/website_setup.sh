@@ -61,6 +61,7 @@ LOCATIONS = {
     'as_config': "${CONFIGDIR_SERVER}/AS_config.txt",
     "as_connections_public": "${CONFIGDIR_SERVER}/aslevel_links_students.txt",
     "as_connections": "${CONFIGDIR_SERVER}/aslevel_links.txt",
+    "as_nicknames": "${CONFIGDIR_SERVER}/as_nicknames.csv",
     'groups': '${DATADIR_SERVER}',
     "matrix": "${DATADIR_SERVER}/matrix/connectivity.txt",
     "matrix_stats": "${DATADIR_SERVER}/matrix/stats.txt",
@@ -104,8 +105,8 @@ docker run -itd --name="WEB" --cpus=2 \
     "${additional_args[@]}" \
     --hostname="web" \
     --privileged \
-    "webserver" > /dev/null
-    # "${DOCKERHUB_PREFIX}d_webserver" > /dev/null
+    "${DOCKERHUB_PREFIX}d_webserver" > /dev/null
+    # "webserver" > /dev/null
 
 # Next start the proxy
 # Setup based on the following tutorials:
@@ -116,18 +117,18 @@ docker run -itd --name="WEB" --cpus=2 \
 # The dashboard is then available at http://localhost:8080/dashboard/
 # If anything goes wrong, add "--log.level=DEBUG" to enable logging,
 # and then use "sudo docker logs PROXY" to see the logs.
-# docker run -d --name='PROXY' --network="bridge" \
-#     -p ${WEBSERVER_PORT_HTTP}:${WEBSERVER_PORT_HTTP} \
-#     -p ${WEBSERVER_PORT_HTTPS}:${WEBSERVER_PORT_HTTPS} \
-#     -p ${WEBSERVER_PORT_KRILL}:${WEBSERVER_PORT_KRILL} \
-#     -v "/var/run/docker.sock:/var/run/docker.sock:ro" \
-#     -v ${LETSENCRYPT}:/letsencrypt \
-#     --privileged \
-#     traefik:v2.6 \
-#     "--providers.docker=True" \
-#     "--providers.docker.network=bridge" \
-#     "--providers.docker.exposedbydefault=false" ${TLSCONF[@]} \
-#     "--providers.docker.defaultRule=Host(\"${WEBSERVER_HOSTNAME}\")" \
-#     "--entrypoints.web.address=:${WEBSERVER_PORT_HTTP}" \
-#     "--entrypoints.websecure.address=:${WEBSERVER_PORT_HTTPS}" \
-#     "--entrypoints.krill.address=:${WEBSERVER_PORT_KRILL}" > /dev/null
+docker run -d --name='PROXY' --network="bridge" \
+    -p ${WEBSERVER_PORT_HTTP}:${WEBSERVER_PORT_HTTP} \
+    -p ${WEBSERVER_PORT_HTTPS}:${WEBSERVER_PORT_HTTPS} \
+    -p ${WEBSERVER_PORT_KRILL}:${WEBSERVER_PORT_KRILL} \
+    -v "/var/run/docker.sock:/var/run/docker.sock:ro" \
+    -v ${LETSENCRYPT}:/letsencrypt \
+    --privileged \
+    traefik:v2.6 \
+    "--providers.docker=True" \
+    "--providers.docker.network=bridge" \
+    "--providers.docker.exposedbydefault=false" ${TLSCONF[@]} \
+    "--providers.docker.defaultRule=Host(\"${WEBSERVER_HOSTNAME}\")" \
+    "--entrypoints.web.address=:${WEBSERVER_PORT_HTTP}" \
+    "--entrypoints.websecure.address=:${WEBSERVER_PORT_HTTPS}" \
+    "--entrypoints.krill.address=:${WEBSERVER_PORT_KRILL}" > /dev/null

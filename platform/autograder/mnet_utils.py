@@ -24,39 +24,39 @@ from other_utils import (
 ####################################################
 
 # TODO: parse names from config file
-REGION_NAMES = ["BIRM", "FRAN", "MUNI", "ZURI", "LYON", "MILA", "BARC", "NAPL"]
+REGION_NAMES = ["MSP", "NYC", "BOS", "PHY", "CHI", "ATL", "SFO", "HOU"]
 
 REGION_NAME_TO_ID = {
-    "BIRM": 1,
-    "FRAN": 2,
-    "MUNI": 3,
-    "ZURI": 4,
-    "LYON": 5,
-    "MILA": 6,
-    "BARC": 7,
-    "NAPL": 8,
+    "MSP": 1,
+    "NYC": 2,
+    "BOS": 3,
+    "PHY": 4,
+    "CHI": 5,
+    "ATL": 6,
+    "SFO": 7,
+    "HOU": 8,
 }
 
 REGION_ID_TO_NAME = {v: k for k, v in REGION_NAME_TO_ID.items()}
 
 ROUTER_LINK_TO_ID = {
-    ("BIRM", "BARC"): 1,
-    ("BIRM", "LYON"): 2,
-    ("BIRM", "FRAN"): 3,
-    ("FRAN", "ZURI"): 4,
-    ("FRAN", "MUNI"): 5,
-    ("LYON", "NAPL"): 6,
-    ("LYON", "ZURI"): 7,
-    ("ZURI", "MILA"): 8,
-    ("ZURI", "MUNI"): 9,
-    ("MUNI", "MILA"): 10,
-    ("MILA", "NAPL"): 11,
-    ("BARC", "NAPL"): 12,
+    ("MSP", "SFO"): 1,
+    ("MSP", "CHI"): 2,
+    ("MSP", "NYC"): 3,
+    ("NYC", "PHY"): 4,
+    ("NYC", "BOS"): 5,
+    ("CHI", "HOU"): 6,
+    ("CHI", "PHY"): 7,
+    ("PHY", "ATL"): 8,
+    ("PHY", "BOS"): 9,
+    ("BOS", "ATL"): 10,
+    ("ATL", "HOU"): 11,
+    ("SFO", "HOU"): 12,
 }
 
 ROUTER_ID_TO_LINK = {v: k for k, v in ROUTER_LINK_TO_ID.items()}
 
-L2_DCN_HOST_NAMES = ["A_TUM", "S_TUM"]
+L2_DCN_HOST_NAMES = ["A_MGH", "P_MGH"]
 
 L2_COMP_NAME_1 = "A"
 
@@ -64,7 +64,7 @@ L2_COMP_NAME_2 = "S"
 
 L2_DCN_REGION_NAMES = ["TUM"]
 
-L2_DCS_HOST_NAMES = ["A_MIL", "S_MIL", "A_POL", "S_POL"]
+L2_DCS_HOST_NAMES = ["A_EUH", "P_EUH", "A_CHA", "P_CHA"]
 L2_DCS_REGION_NAMES = ["MIL", "POL"]
 
 L2_HOST_NAMES = L2_DCN_HOST_NAMES + L2_DCS_HOST_NAMES
@@ -79,17 +79,17 @@ L2_REGION_TO_SW = {"TUM": 1, "MIL": 2, "POL": 3}
 
 L3_EXP_MASK_LEN = 24
 
-L2_DCN_GW_R = "MUNI"
+L2_DCN_GW_R = "BOS"
 
-L2_DCS_GW_R = "MILA"
+L2_DCS_GW_R = "ATL"
 
-L2_DCN_CONN_R = ["MUNI"]
+L2_DCN_CONN_R = ["BOS"]
 
 L2_SW_CONN = [("S2", "S3")]
 
-L2_L3_CONN = [("S1", "MUNI"), ("S2", "MILA")]
+L2_L3_CONN = [("S1", "BOS"), ("S2", "ATL")]
 
-TUNNEL_REGIONS = ["MUNI", "MILA"]
+TUNNEL_REGIONS = ["BOS", "ATL"]
 
 VLAN_TAGS = {10, 20}
 
@@ -115,17 +115,17 @@ LOSS_TH = 25
 AS_INFO_PATH = os.path.join(os.getcwd(), "configs/aslevel_links_students.txt")
 
 NB_CONN = {
-    "PROV1": "BIRM",
-    "PROV2": "FRAN",
-    "CUST1": "BARC",
-    "CUST2": "NAPL",
-    "PEER1": "MUNI",
-    "IXP": "LYON",
+    "PROV1": "MSP",
+    "PROV2": "NYC",
+    "CUST1": "SFO",
+    "CUST2": "HOU",
+    "PEER1": "BOS",
+    "IXP": "CHI",
 }
 
 SD_CTN_PREFIX = ""
 
-ROUTINATOR_R = "ZURI"
+ROUTINATOR_R = "PHY"
 BGP_CONV_WAIT = 20
 
 
@@ -158,8 +158,8 @@ def parse_as_conn_info():
     return conn, ixps
 
 
-# {1: {'ZURI': (2, 'MUNI', 'Customer', '179.0.41.1/24')}}
-# means MUNI of AS 2 is a customer of ZURI of AS 1, and ZURI of AS 1
+# {1: {'PHY': (2, 'BOS', 'Customer', '179.0.41.1/24')}}
+# means BOS of AS 2 is a customer of PHY of AS 1, and PHY of AS 1
 # should have 179.0.41.1/24 on its ext_2_MUNI interface
 AS_CONN_INFO, IXP_ASNS = parse_as_conn_info()
 
@@ -323,8 +323,8 @@ def get_ext_intf_names(asn, nb_name):
     return intf_r, intf_nb
 
 
-# for cache, {(3, 'PROV1'): (1, 'ZURI')}
-# means AS 3's PROV is ZURI of AS 1
+# for cache, {(3, 'PROV1'): (1, 'PHY')}
+# means AS 3's PROV is PHY of AS 1
 nb_exp_asn = {}
 
 
@@ -538,7 +538,7 @@ def get_s_vlan_tags(asn, s_name):
     """
     Return the vlan tag dictionary of the switch.
 
-    E.g., {'1-ZURI': [10, 20], '1-FIFA_1': 10}
+    E.g., {'1-PHY': [10, 20], '1-FIFA_1': 10}
     """
     assert s_name in L2_SW_NAMES
     if (asn, s_name) not in s_tags:
@@ -566,7 +566,7 @@ def get_ospf_cost_via_dcn(asn, src, dst):
     """
     Return the ospf cost list from src to dst via dcn.
 
-    E.g., [('ZURI', 'DCN', 0), ('DCN', 'BASE', 10)],
+    E.g., [('PHY', 'DCN', 0), ('DCN', 'BASE', 10)],
     the cost depends on the ospf cost from src to dst (w/o via dcn).
     """
 
@@ -626,7 +626,7 @@ def get_net_ospf_graph(asn):
             """
             Return the ospf cost list for other router neighbors of a router.
 
-            E.g., [('ZURI', 'BASE', 10)], this format is compatible with nx.
+            E.g., [('PHY', 'BASE', 10)], this format is compatible with nx.
             """
             assert r_name in REGION_NAMES
             cost = []

@@ -7,7 +7,7 @@ The documentation is available in the [**wiki**](https://github.com/nsg-ethz/min
 - Some of the scripts to use *after setup* are fickle; e.g. the one to configure existing ASes; the scripts just run some commands in ASes, regardless of what has been already configured. If used on a half-configured AS, this can lead to a big mess. Can we make this more robust?
 - The proxy containers need regular pruning so they don’t hit the process limit → fix that problem at the source.
 - Fix the bug where traceroute from hosts don’t go through all the load-balanced paths but seem to all go over the same
-- Make sure that the hostnames don’t resolve to the IPs of the docker containers, so that traceroutes don’t use the docker network if the students type in traceroute MILA\_router
+- Make sure that the hostnames don’t resolve to the IPs of the docker containers, so that traceroutes don’t use the docker network if the students type in traceroute ATL\_router
 - Fix the problem that groups need access to AS1 for some tasks, either distribute krill and vpn secret or advertise route to AS1 from more places
 - Allow webpage to be accessed while connected to the VPN
 - Change the color of the invalid entries in the matrix to something darker to make it easier to distinguish from green, for color blindness reasons

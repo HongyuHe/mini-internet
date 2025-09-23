@@ -84,9 +84,9 @@ for ((j = 0; j < n_krill_containers; j++)); do
         admin_passwd=$(awk "\$1 == \"admin\" { print \$0 }" "${DIRECTORY}/groups/krill_passwords.txt" | cut -f 2 -d ' ')
         readonly_passwd=$(awk "\$1 == \"readonly\" { print \$0 }" "${DIRECTORY}/groups/krill_passwords.txt" | cut -f 2 -d ' ')
         {
-            echo "${admin_passwd}" | docker exec -i $krill_container_name krillc config user --id "admin@ethz.ch" \
+            echo "${admin_passwd}" | docker exec -i $krill_container_name krillc config user --id "admin@netsyn.princeton.edu" \
                 -a "role=admin" | grep "admin" | tr -d '\r'
-            echo "${readonly_passwd}" | docker exec -i $krill_container_name krillc config user --id "readonly@ethz.ch" \
+            echo "${readonly_passwd}" | docker exec -i $krill_container_name krillc config user --id "readonly@netsyn.princeton.edu" \
                 -a "role=readonly" | grep "readonly" | tr -d '\r'
         } >> $krill_config_location
     fi
@@ -127,7 +127,7 @@ for ((k = 0; k < group_numbers; k++)); do
                 passwd=$(awk "\$1 == \"${group_number}\" { print \$0 }" "${DIRECTORY}/groups/passwords.txt" | cut -f 2 -d ' ')
                 {
                     # Emulate a fake tty because krillc only reads input from a tty but not STDIN.
-                    echo "${passwd}" | docker exec -i $krill_container_name krillc config user --id "group${group_number}@ethz.ch" \
+                    echo "${passwd}" | docker exec -i $krill_container_name krillc config user --id "group${group_number}@netsyn.princeton.edu" \
                         -a "role=readwrite" -a "inc_cas=group${group_number}" | grep "group${group_number}" | tr -d '\r'
                 } >> $krill_config_location
 

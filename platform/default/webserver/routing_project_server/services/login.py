@@ -45,7 +45,7 @@ def load_passwd(file):
         user = {}
         group_id, passwd = line.replace("\n","").split()
         user["group_id"] = group_id
-        user["username"] = f"group{group_id}@ethz.ch"
+        user["username"] = f"group{group_id}@netsyn.princeton.edu"
         user["password"] = passwd
         users.append(user)
 

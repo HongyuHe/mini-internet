@@ -8,8 +8,7 @@
 style="background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, white 4px, white 6px);"
 {%- endif %}
 {%- endmacro %}
-{% macro stacknumber(asn, nicknames) -%}
-{% if nicknames.get(asn) %}<span class="text-xs font-thin -mb-1">{{ nicknames[asn] }}</span>{% endif %}
+{% macro stacknumber(asn) -%}
 {% if asn >= 100 -%}<span style="margin-bottom:-0.25rem">{{ asn // 100}}</span>{% endif %}
 {% if asn >= 10 -%}<span style="margin-bottom:-0.25rem">{{ (asn % 100) // 10}}</span>{% endif %}
 <span>{{ asn % 10}}</span>
@@ -93,6 +92,21 @@ function toggle(){
 		a few matrix updates until a
 		change for a particular pair of ASes is visible.
 	</p>
+
+	{% if as_nicknames %}
+	<div class="mb-8">
+		<h2 class="text-2xl font-bold mb-2">AS Owners</h2>
+		<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+			{% for asn, name in as_nicknames.items()|sort %}
+			<div class="flex items-center space-x-2">
+				<span class="font-bold">{{ asn }}:</span>
+				<span>{{ name }}</span>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
+
 	<div class="mb-8 flex flex-col items-center">
 		<label class="inline-flex items-center cursor-pointer">
 			<input type="checkbox" value="" class="sr-only peer" checked onchange="toggle()">
@@ -150,15 +164,13 @@ function toggle(){
 		<div class="border border-white/50 text-center self-end">AS</div>
 		{% for asn in (connectivity|sort) %}
 		<div class="border border-white/50 text-center even:bg-neutral-200 flex flex-col justify-end">
-			{{ stacknumber(asn, as_nicknames) }}
+			{{ stacknumber(asn) }}
 		</div>
 		{% endfor %}
 		<!-- content rows -->
 		<!-- Add a little padding to ASN to make it look nicer. -->
 		{% for asn in connectivity|sort %}
-		<div class="border border-white/50 even:bg-neutral-200 text-right pr-1">
-            {% if as_nicknames.get(asn) %}{{ as_nicknames[asn] }} {% endif %}{{asn}}
-        </div>
+		<div class="border border-white/50 even:bg-neutral-200 text-right pr-1">{{asn}}</div>
 		{% for asn_dst in connectivity[asn]|sort %}
 		{% if not connectivity[asn][asn_dst] %}
 		<div class="border border-white/50 bg-[#d5605e] notreachable" title="AS{{asn}}&rarr;AS{{asn_dst}}: Not Reachable"

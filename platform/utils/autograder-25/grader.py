@@ -419,7 +419,7 @@ def check_l3_load_balancing(asn, src, dst, exp_sp, exp_hops, log_file=None):
     #     """
     #     Convert a sequence of router names to their numeric hops.
 
-    #     Given a list of router names, e.g., ['ZURI', 'BASE', 'LYON'],
+    #     Given a list of router names, e.g., ['PHY', 'BASE', 'CHI'],
     #     return a list of numerical ipv4 hops, e.g., ['3.0.1.2', '3.0.8.2'],
     #     as BASEroute's interface to ZURIrouter is 3.0.1.2, and
     #     LYONrouter's interface to BASErouter is 3.0.8.2.
@@ -435,7 +435,7 @@ def check_l3_load_balancing(asn, src, dst, exp_sp, exp_hops, log_file=None):
         Convert a numeric ipv4 address to the l3 link name.
 
         Given an ipv4 numeric hop, e.g., '3.0.11.1',
-        return the equivalent link name, e.g., 'LUGA-MILA'.
+        return the equivalent link name, e.g., 'LUGA-ATL'.
         """
         pat = r"^\d+\.\d+\.(\d+)\.(\d+)"
         match = re.search(pat, num_hop)
@@ -629,7 +629,7 @@ def check_dc_traffic_use_link(asn, link_name, log_file=None):
     Check a link is used for the acorss DC traffic.
 
     Check when triggering traffic between 2 dcs,
-    there are ICMP packets captured on the given link (e.g., 'ZURI-GENE'),
+    there are ICMP packets captured on the given link (e.g., 'PHY-GENE'),
     if v6=True, the traffic is ipv6.
     """
     print = partial(new_print, log_file=log_file)
@@ -1454,9 +1454,9 @@ def q1_3(asn, log_file=None):
     print("\n#####Q1.3: OSPF load balancing.#####")
     points_1 = check_l3_load_balancing(
         cur_asn,
-        "MILA",
-        "MUNI",
-        [["MILA", "MUNI"],["MILA", "ZURI", "MUNI"],["MILA", "ZURI", "FRAN", "MUNI"]],
+        "ATL",
+        "BOS",
+        [["ATL", "BOS"],["ATL", "PHY", "BOS"],["ATL", "PHY", "NYC", "BOS"]],
         {
             1: {f"{cur_asn}.0.11.2", f"{cur_asn}.0.12.2", f"{cur_asn}.0.3.2"},
             2: {f"{cur_asn}.0.6.2", f"{cur_asn}.0.7.2", f"{cur_asn}.0.11.2"},
@@ -1467,9 +1467,9 @@ def q1_3(asn, log_file=None):
     points = points_1 * 0.5
     points_2 = check_l3_load_balancing(
         asn,
-        "MUNI",
-        "MILA",
-        [["MUNI", "MILA"],["MUNI", "ZURI", "MILA"],["MUNI", "FRAN", "ZURI", "MILA"]],
+        "BOS",
+        "ATL",
+        [["BOS", "ATL"],["BOS", "PHY", "ATL"],["BOS", "NYC", "PHY", "ATL"]],
         {
             1: {f"{cur_asn}.0.7.1", f"{cur_asn}.0.11.1"},
             2: {f"{cur_asn}.0.6.1", f"{cur_asn}.0.2.1", f"{cur_asn}.0.1.1"},
@@ -1672,11 +1672,11 @@ if __name__ == "__main__":
             # (
             #     check_l3_load_balancing(
             #         cur_asn,
-            #         "ZURI",
+            #         "PHY",
             #         "LUGA",
             #         [
-            #             ["ZURI", "LUCE", "LUGA"],
-            #             ["ZURI", "BERN", "LAUS", "LUGA"],
+            #             ["PHY", "LUCE", "LUGA"],
+            #             ["PHY", "BERN", "LAUS", "LUGA"],
             #         ],
             #         {
             #             1: {f"{cur_asn}.0.1.2", f"{cur_asn}.0.2.2"},
@@ -1692,10 +1692,10 @@ if __name__ == "__main__":
             #     + check_l3_load_balancing(
             #         cur_asn,
             #         "LUGA",
-            #         "ZURI",
+            #         "PHY",
             #         [
-            #             ["LUGA", "LUCE", "ZURI"],
-            #             ["LUGA", "LAUS", "BERN", "ZURI"],
+            #             ["LUGA", "LUCE", "PHY"],
+            #             ["LUGA", "LAUS", "BERN", "PHY"],
             #         ],
             #         {
             #             1: {f"{cur_asn}.0.7.1", f"{cur_asn}.0.11.1"},
@@ -1709,7 +1709,7 @@ if __name__ == "__main__":
             # check_l2_conn_in_dc(cur_asn, v6=True, dcs=True, log_file=log_file),
             # check_across_dc_v6_conn(cur_asn, log_file=log_file),
             # # # as long as there is ipv6 connection, the path does not matter
-            # # # check_dc_traffic_use_link(cur_asn, "ZURI-LUCE"),
+            # # # check_dc_traffic_use_link(cur_asn, "PHY-LUCE"),
             # check_ibgp_full_mesh(cur_asn, log_file=log_file),
             # check_as_intf_config(cur_asn, log_file=log_file),
             # check_nb_route_send_rcv(cur_asn, log_file=log_file),

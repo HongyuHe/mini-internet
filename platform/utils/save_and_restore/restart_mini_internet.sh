@@ -1,10 +1,10 @@
 #!/bin/bash
 
 WORKDIR="$(pwd)/"
-routers=('BIRM' 'FRAN' 'MUNI' 'ZURI' 'LYON' 'MILA' 'BARC' 'NAPL')
-dchosts=('A_TUM' 'S_TUM' 'A_MIL' 'S_MIL' 'A_POL' 'S_POL')
+routers=('MSP' 'NYC' 'BOS' 'PHY' 'CHI' 'ATL' 'SFO' 'HOU')
+dchosts=('A_MGH' 'P_MGH' 'A_EUH' 'P_EUH' 'A_CHA' 'P_CHA')
 switches=('S1' 'S1' 'S2' 'S2' 'S3' 'S3')
-tunnels=('MUNI' 'MILA')
+tunnels=('BOS' 'ATL')
 
 # Variables for this script
 isDoBackup=false

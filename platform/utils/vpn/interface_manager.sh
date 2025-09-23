@@ -72,7 +72,7 @@ get_port() {
 }
 
 # Check if a wireguard interface exists for $1 = GroupNumber and $2 = RouterName
-# Example "check_if_exists 3 MUNI" checks if the MUNI router of group 3 has a wireguard interface.
+# Example "check_if_exists 3 BOS" checks if the BOS router of group 3 has a wireguard interface.
 check_if_exists() {
 	path_to_file="${DIRECTORY}"/groups/g"$1"/"$2"/wireguard/interface.conf
 	if [ -f "$path_to_file" ]; then
@@ -83,7 +83,7 @@ check_if_exists() {
 }
 
 # Check if a wireguard interface is up and running ($1 = GroupNumber and $2 = RouterName)
-# Example "check_if_up 3 MUNI"
+# Example "check_if_up 3 BOS"
 check_if_up() {
 	exists=$(docker ps -q -f name="$(get_container_name $1 $2)")
 	if [ -n "$exists" ]; then
@@ -186,7 +186,7 @@ delete_all_ifs() {
 }
 
 # Create a peer with $1 = GroupNumber, $2 = RouterName,$3 = PeerName, $4 = IPAddress
-# Example: create_wg_peer 3 ZURI leos_device "3.1.0.2/32"
+# Example: create_wg_peer 3 PHY leos_device "3.1.0.2/32"
 create_wg_peer() { 
 	path_to_file="${DIRECTORY}"/groups/g"$1"/"$2"/wireguard/        
         filename="${3}.peer"                                                                        

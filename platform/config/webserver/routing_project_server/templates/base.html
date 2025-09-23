@@ -18,12 +18,12 @@
 <head>
     {% block head %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='favicon_pu.ico')}}">
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='favicon.ico')}}">
     <link rel="stylesheet" href={{url_for('static', filename='style.css' )}}>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <title>Routing Project - {{ navigation_bar.get(request.endpoint, request.endpoint)|replace('_', " ")|title }}
+    <title>COS461/ECE471 Routing Project - {{ navigation_bar.get(request.endpoint, request.endpoint)|replace('_', " ")|title }}
     </title>
     {% endblock %}
 </head>
@@ -36,9 +36,9 @@
             <!-- Logo -->
 	    <a href="/">
             <div class="flex items-center flex-shrink-0 mr-6 text-3xl">
-                <img class=" h-16 pr-4" alt="logo" src="{{url_for('static', filename='logo.svg')}}" />
+                <img class=" h-16 pr-4" alt="logo" src="{{url_for('static', filename='netsynlogo.png')}}" />
                 <!-- <span class="text-gray-400 pr-2">></span> -->
-		<span>COS461/ECE471 Routing Project</span>
+		<span>Routing Project</span>
             </div>
 	    </a>
             <!-- Menu -->
@@ -53,6 +53,13 @@
                 </a>
             </div>
             {% endfor %}
+            <!-- Static link -->
+            <div>
+                <a class="block mt-4 lg:inline-block lg:mt-0 hover:font-bold mr-4 text-lg"
+                href="https://github.com/cos-461/routing/wiki" target="_blank" rel="noopener">
+                Wiki
+                </a>
+            </div>
 	    {% if current_user.is_authenticated %}
 	    <div class="">
 		<span class="pr-2 pl-2">

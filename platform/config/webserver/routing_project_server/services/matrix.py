@@ -41,9 +41,11 @@ def prepare_matrix(config, worker=False):
     last_updated, update_frequency = parsers.parse_matrix_stats(
         config['LOCATIONS']['matrix_stats']
     )
-    as_nicknames = parsers.parse_as_nicknames(
-        config['LOCATIONS']['as_nicknames']
-    )
+
+    as_nicknames = {}
+    nicknames_path = config.get('LOCATIONS', {}).get('as_nicknames')
+    if nicknames_path:
+        as_nicknames = parsers.parse_as_nicknames(nicknames_path)
 
     # Compute results
     connectivity = check_connectivity(

@@ -24,6 +24,7 @@ SSH_URL="hecate.princeton.edu"
 # LetsEncrypt to be enabled.
 # UPDATE THOSE VARIABLES. WEBSERVER_HOSTNAME -> hostname of the server and EMAIL -> empty string (for http)
 WEBSERVER_HOSTNAME="hecate.princeton.edu"
+#* hecate is only resolvable within princeton, leave it empty for http
 WEBSERVER_ACME_MAIL=""
 # Hostname and ports for the webserver and krill on the host.
 # (must be publicly available)
@@ -115,7 +116,7 @@ HISTORY_FORGET_BINARIES="true"
 VPN_ENABLED=false
 
 # Enable/Disable DNS for wireguard clients
-VPN_DNS_ENABLED=true
+VPN_DNS_ENABLED=false
 
 # Enable/Disable VPN website
 # VPN_WEBSITE_ENABLED=fale

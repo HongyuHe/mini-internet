@@ -238,5 +238,5 @@ get_host_subnet = cached_function(uncached_get_host_subnet)
 get_default_via = cached_function(uncached_get_default_via)
 get_router_tunnel = cached_function(uncached_get_router_tunnel)
 
-# str_out = get_router_tunnel(129, "ZURI")
+# str_out = get_router_tunnel(129, "PHY")
 # print(str_out)

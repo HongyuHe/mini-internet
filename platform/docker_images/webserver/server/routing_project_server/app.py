@@ -39,6 +39,7 @@ config_defaults = {
         "config_directory": "../../../config",
         "matrix": "../../../groups/matrix/connectivity.txt",
         "matrix_stats": "../../../groups/matrix/stats.txt",
+        "as_nicknames": "../../../groups/as_nicknames.csv"
     },
     'KRILL_URL': "http://{hostname}:3080/index.html",
     'BASIC_AUTH_USERNAME': 'admin',

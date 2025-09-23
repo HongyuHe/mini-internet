@@ -75,7 +75,7 @@ BUFFER_ADVERTISES_ALL_VIA_IXP = True
 # Size of the topology.
 # ---------------------
 
-AREAS = 3
+AREAS = 6
 CONFIGURABLE_PER_AREA = 4  # Number of ASes that can be configured by students.
 FIRST_IXP = 140
 
@@ -99,46 +99,46 @@ transit_as_topo = {
     # connection of AS to X: (AS city, AS role)
     # Example: The connection to the first provider is at Basel, and the AS
     # takes the role of a customer.
-    'provider1': ('BIRM', customer),
-    'provider2': ('FRAN', customer),
-    'customer1': ('BARC', provider),
-    'customer2': ('NAPL', provider),
+    'provider1': ('MSP', customer),
+    'provider2': ('NYC', customer),
+    'customer1': ('SFO', provider),
+    'customer2': ('HOU', provider),
     # Peer and IXP.
-    'peer': ('MUNI', peer),
-    'ixp': ('LYON', peer),
+    'peer': ('BOS', peer),
+    'ixp': ('CHI', peer),
 }
 
-# All non-transit ASes only have a single router ZURI.
+# All non-transit ASes only have a single router PHY.
 
 tier1_topo = {
     # Tier 1 Ases have no providers, but more peers and two IXPs.
-    'ixp_central': ('ZURI', peer),
-    'ixp': ('ZURI', peer),
+    'ixp_central': ('PHY', peer),
+    'ixp': ('PHY', peer),
     # Other Tier 1.
-    'peer1': ('ZURI', peer),
-    'peer2': ('ZURI', peer),
+    'peer1': ('PHY', peer),
+    'peer2': ('PHY', peer),
     # Connections to customers.
-    'customer1': ('ZURI', provider),
-    'customer2': ('ZURI', provider),
+    'customer1': ('PHY', provider),
+    'customer2': ('PHY', provider),
 }
 
 # We use a minimal stub topo without hijacks, and the transit one with hijacks.
 stub_topo = transit_as_topo if ENABLE_STUB_HIJACKS else {
     # Same providers, but IXP and peer. are somewhere else.
-    "provider1": ("ZURI", customer),
-    "provider2": ("ZURI", customer),
-    "peer": ("ZURI", peer),
-    "ixp": ("ZURI", peer),
+    "provider1": ("PHY", customer),
+    "provider2": ("PHY", customer),
+    "peer": ("PHY", peer),
+    "ixp": ("PHY", peer),
 }
 
 buffer_topo = {
     # Looks like transit AS, but we only have a single router.
-    "provider1": ("ZURI", customer),
-    "provider2": ("ZURI", customer),
-    "customer1": ("ZURI", provider),
-    "customer2": ("ZURI", provider),
-    "peer": ("ZURI", peer),
-    "ixp": ("ZURI", peer),
+    "provider1": ("PHY", customer),
+    "provider2": ("PHY", customer),
+    "customer1": ("PHY", provider),
+    "customer2": ("PHY", provider),
+    "peer": ("PHY", peer),
+    "ixp": ("PHY", peer),
 }
 
 ixp_topo = {
@@ -178,8 +178,9 @@ ASES_PER_AREA = CONFIGURABLE_PER_AREA + 4  # 2 stub, 2 provider
 if ENABLE_STUB_HIJACKS:
     ASES_PER_AREA += 2  # add 2 ASes as buffer between students and hijackers.
 # Leave enough space if we have to skip some ASes.
-_area_max = 10 * math.ceil((ASES_PER_AREA + 1 + len(skip_groups)) / 10)
-
+# _area_max = 10 * math.ceil((ASES_PER_AREA + 1 + len(skip_groups)) / 10)
+# replace the _area_max line with:
+_area_max = 10 * math.ceil(ASES_PER_AREA / 10)
 
 def _area_ases(start):
     """Append ASes to the list, skipping the ones in skip_groups."""

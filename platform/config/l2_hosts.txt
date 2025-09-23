@@ -1,6 +1,6 @@
-A_TUM    miniinterneteth/d_host DCN   S1    10mbit   1ms    50ms    10
-S_TUM    miniinterneteth/d_host DCN   S1    10mbit   1ms    50ms    20
-A_MIL    miniinterneteth/d_host DCS   S2    10mbit   1ms    50ms    10
-S_MIL    miniinterneteth/d_host DCS   S2    10mbit   1ms    50ms    20
-A_POL    miniinterneteth/d_host DCS   S3    10mbit   1ms    50ms    10
-S_POL    miniinterneteth/d_host DCS   S3    10mbit   1ms    50ms    20
+A_MGH    miniinterneteth/d_host DCN   S1    10mbit   1ms    50ms    10
+P_MGH    miniinterneteth/d_host DCN   S1    10mbit   1ms    50ms    20
+A_EUH    miniinterneteth/d_host DCS   S2    10mbit   1ms    50ms    10
+P_EUH    miniinterneteth/d_host DCS   S2    10mbit   1ms    50ms    20
+A_CHA    miniinterneteth/d_host DCS   S3    10mbit   1ms    50ms    10
+P_CHA    miniinterneteth/d_host DCS   S3    10mbit   1ms    50ms    20

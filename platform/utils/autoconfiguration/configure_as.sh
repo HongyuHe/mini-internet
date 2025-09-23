@@ -8,8 +8,8 @@ PLATFORM_DIR=/users/hy/mini-internet/platform
 ASN_TO_CONFIGURE="23 24 25 26"
 # this variable contains all the router names that need to be configured.
 # The order is important, as it will be used to assign IP addresses to the routers.
-ROUTER_NAMES="BIRM FRAN MUNI ZURI LYON MILA BARC NAPL"
-# ROUTER_NAMES="ZURI BASE GENE LUGA MUNI LYON VIEN MILA"
+ROUTER_NAMES="MSP NYC BOS PHY CHI ATL SFO HOU"
+# ROUTER_NAMES="PHY BASE GENE LUGA BOS CHI VIEN ATL"
 CONFIG_FILES="conf_init.sh conf_full.sh conf_rpki.sh"
 
 echo "Updating configs."
