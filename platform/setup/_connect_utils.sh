@@ -629,6 +629,7 @@ connect_service_interfaces() {
     if [ "$(docker inspect -f '{{.State.Running}}' "$client_container")" == "false" ]; then
         docker start "$client_container" > /dev/null
     fi
+
     local pid_service=$(get_container_pid $service_container "False")
     local pid_client=$(get_container_pid $client_container "False")
 
@@ -636,25 +637,39 @@ connect_service_interfaces() {
     create_netns_symlink $pid_service
     create_netns_symlink $pid_client
 
-    # create a veth pair
-    ip link add $veth_service type veth peer name $veth_client
+    # check if interfaces already exist in namespaces
+    if ip netns exec $pid_service ip link show $service_interface &>/dev/null && \
+       ip netns exec $pid_client ip link show $client_interface &>/dev/null; then
+        echo "Interfaces $service_interface and $client_interface already exist, skipping veth creation."
+    else
+        # remove stale veths if they exist
+        ip link del $veth_service &>/dev/null || true
+        ip link del $veth_client &>/dev/null || true
 
-    # set up the interfaces on containers
-    ip link set $veth_service netns $pid_service
-    ip netns exec $pid_service ip link set dev $veth_service name $service_interface
-    ip netns exec $pid_service ip link set $service_interface up
+        # create a veth pair
+        ip link add $veth_service type veth peer name $veth_client
 
-    ip link set $veth_client netns $pid_client
-    ip netns exec $pid_client ip link set dev $veth_client name $client_interface
-    ip netns exec $pid_client ip link set $client_interface up
+        # attach service side
+        ip link set $veth_service netns $pid_service
+        ip netns exec $pid_service ip link set dev $veth_service name $service_interface
+        ip netns exec $pid_service ip link set $service_interface up
 
-    # add the address
-    ip netns exec $pid_service ip addr add $service_subnet dev $service_interface
-    # Do not configure the client IP address if the client is a host; the
-    # router configuration will do this later. But if client is also a service
-    # we need to do it now.
+        # attach client side
+        ip link set $veth_client netns $pid_client
+        ip netns exec $pid_client ip link set dev $veth_client name $client_interface
+        ip netns exec $pid_client ip link set $client_interface up
+    fi
+
+    # ensure service IP is set
+    if ! ip netns exec $pid_service ip addr show $service_interface | grep -q "${service_subnet%/*}"; then
+        ip netns exec $pid_service ip addr add $service_subnet dev $service_interface
+    fi
+
+    # configure client IP only if client is a service
     if [ "$client_group" == "-1" ]; then
-        ip netns exec $pid_client ip addr add $client_subnet dev $client_interface
+        if ! ip netns exec $pid_client ip addr show $client_interface | grep -q "${client_subnet%/*}"; then
+            ip netns exec $pid_client ip addr add $client_subnet dev $client_interface
+        fi
     fi
 
     # configure static route to each group if group_subnet is not -1
@@ -664,10 +679,16 @@ connect_service_interfaces() {
         # traffic via any group interface.
         # DNS container does not need this default route.
         if [ "$service_container" != "DNS" ]; then
-            ip netns exec $pid_service ip route add default via ${client_subnet%/*} metric $client_group
+            if ! ip netns exec $pid_service ip route show | grep -q "default via ${client_subnet%/*} metric $client_group"; then
+                ip netns exec $pid_service ip route add default via ${client_subnet%/*} metric $client_group
+            fi
         fi
-        # All containers need a group route to be directly reachable.
-        ip netns exec $pid_service ip route add $(subnet_group $client_group) via ${client_subnet%/*}
+
+        # add static route for group subnet
+        local group_subnet=$(subnet_group $client_group)
+        if ! ip netns exec $pid_service ip route show | grep -q "$group_subnet"; then
+            ip netns exec $pid_service ip route add $group_subnet via ${client_subnet%/*}
+        fi
     fi
 }
 
