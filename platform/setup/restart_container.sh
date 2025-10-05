@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Restart the container and reconnect the link
+# Example usage: sudo ./setup/restart_container.sh l3-host 1 PHY host1
 
 # sanity check
 trap 'exit 1' ERR

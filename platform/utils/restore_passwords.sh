@@ -25,65 +25,125 @@ if [ ! -f "$PASSWORDS_FILE" ]; then
     exit 1
 fi
 
-# Get the list of krill containers
-KRILL_CONTAINERS_FILE="${DIRECTORY}/groups/rpki/krill_containers.txt"
-if [ ! -f "$KRILL_CONTAINERS_FILE" ]; then
-    echo "Warning: Krill containers list not found at $KRILL_CONTAINERS_FILE. Skipping Krill password restoration."
-    KRILL_CONTAINERS=()
-else
-    readarray -t KRILL_CONTAINERS < <(awk '/./{print $2}' "$KRILL_CONTAINERS_FILE")
-fi
-
-
+# --- SSH Password Restoration ---
+echo "--- Restoring SSH passwords ---"
 while read -r group_number passwd; do
     if [ -z "$group_number" ] || [ -z "$passwd" ]; then
         continue
     fi
-
-    echo "Restoring password for group ${group_number}"
-
-    # Restore SSH password
     SSH_CONTAINER="${group_number}_ssh"
     if docker inspect -f '{{.State.Running}}' "$SSH_CONTAINER" >/dev/null 2>&1; then
         echo -e "${passwd}\n${passwd}" | docker exec -i "$SSH_CONTAINER" passwd root > /dev/null
-        echo "  - SSH password restored for ${SSH_CONTAINER}"
+        echo "  - SSH password for group ${group_number} restored."
     else
-        echo "  - SSH container ${SSH_CONTAINER} not found or not running. Skipping."
+        echo "  - SSH container for group ${group_number} not found. Skipping."
     fi
-
-    # Restore Krill password
-    if [ ${#KRILL_CONTAINERS[@]} -gt 0 ]; then
-        for krill_container in "${KRILL_CONTAINERS[@]}"; do
-             if [ -z "$krill_container" ]; then
-                continue
-             fi
-             if docker inspect -f '{{.State.Running}}' "$krill_container" >/dev/null 2>&1; then
-                echo "  - Restoring Krill password in ${krill_container}"
-                user_id="group${group_number}@netsyn.princeton.edu"
-                
-                echo "${passwd}" | docker exec -i "$krill_container" krillc config user --id "$user_id" \
-                    -a "role=readwrite" -a "inc_cas=group${group_number}" > /dev/null
-                echo "    - Krill password for user ${user_id} restored."
-             else
-                echo "  - Krill container ${krill_container} not found or not running. Skipping."
-             fi
-        done
-    fi
-
 done < "$PASSWORDS_FILE"
+echo "--- SSH password restoration complete ---"
 
-echo "Password restoration complete."
 
-# After updating passwords in krill, the daemon needs to be reloaded.
-if [ ${#KRILL_CONTAINERS[@]} -gt 0 ]; then
-    echo "Reloading Krill daemons..."
-    for krill_container in "${KRILL_CONTAINERS[@]}"; do
-        if docker inspect -f '{{.State.Running}}' "$krill_container" >/dev/null 2>&1; then
-            docker exec "$krill_container" bash -c "kill -3 \
-$(cat /var/run/krill.pid)"
-            echo "  - Reloaded ${krill_container}"
-        fi
-    done
+# --- Krill Password Restoration ---
+echo ""
+echo "--- Restoring Krill passwords ---"
+
+KRILL_CONTAINERS_FILE="${DIRECTORY}/groups/rpki/krill_containers.txt"
+if [ ! -f "$KRILL_CONTAINERS_FILE" ]; then
+    echo "Warning: Krill containers list not found. Skipping Krill password restoration."
+    exit 0
 fi
+
+# The file contains group_number and container_name per line
+while read -r krill_group_number krill_container_name; do
+    if [ -z "$krill_group_number" ]; then
+        continue
+    fi
+
+    if ! docker inspect -f '{{.State.Running}}' "$krill_container_name" >/dev/null 2>&1; then
+        echo "  - Krill container ${krill_container_name} not found or not running. Skipping."
+        continue
+    fi
+
+    echo "  - Rebuilding Krill config for container ${krill_container_name}"
+
+    # Dynamically find the host path of the krill.conf file from the container mount
+    HOST_CONF_PATH=$(docker inspect -f '{{ range .Mounts }}{{ if eq .Destination "/var/krill/krill.conf" }}{{ .Source }}{{ end }}{{ end }}' "$krill_container_name")
+
+    if [ -z "$HOST_CONF_PATH" ] || [ ! -f "$HOST_CONF_PATH" ]; then
+        echo "    - ERROR: Could not dynamically find krill.conf on the host for container ${krill_container_name}. Skipping."
+        continue
+    fi
+    
+    echo "    - Found host config at: ${HOST_CONF_PATH}"
+
+    TMP_CONF_NEW=$(mktemp)
+    trap 'rm -f "$TMP_CONF_NEW"' EXIT
+
+    # Backup original config on host
+    cp "$HOST_CONF_PATH" "${HOST_CONF_PATH}.bak.$(date +%Y%m%d%H%M%S)"
+
+    # Copy content before [auth_users]
+    awk '/^\\\[auth_users\\\\]/ { exit } { print }' "$HOST_CONF_PATH" > "$TMP_CONF_NEW"
+
+    # Start the [auth_users] section
+    echo "" >> "$TMP_CONF_NEW"
+    echo "[auth_users]" >> "$TMP_CONF_NEW"
+
+    # Preserve admin/readonly users from old config
+    grep -E '"(admin|readonly)@' "$HOST_CONF_PATH" >> "$TMP_CONF_NEW"
+
+    # Generate and add new group user entries
+    while read -r group_number passwd; do
+        if [ -z "$group_number" ] || [ -z "$passwd" ]; then
+            continue
+        fi
+        
+        user_id="group${group_number}@netsyn.princeton.edu"
+        
+        # Use krillc to GENERATE the user entry with new hash and salt
+        entry=$(printf "%s\n" "$passwd" | docker exec -i "$krill_container_name" krillc config user --id "$user_id" -a "role=readwrite" -a "inc_cas=group${group_number}")
+        user_line=$(echo "$entry" | grep "$user_id" | tr -d '\r')
+
+        if [[ -z "$user_line" ]]; then
+            echo "    - ERROR: Failed to generate hash for user $user_id. Skipping this user." >&2
+            continue
+        fi
+        
+        echo "$user_line" >> "$TMP_CONF_NEW"
+    done < "$PASSWORDS_FILE"
+
+    # Copy content after [auth_users] section
+    awk '
+      BEGIN { in_auth = 0 }
+      /^\\\[auth_users\\\\]/ { in_auth = 1; next }
+      {
+        if (!in_auth) next
+        if ($0 ~ /^\\\[/ && $0 != "[auth_users]") {
+          in_auth = 2
+        }
+      }
+      in_auth == 2 { print }
+    ' "$HOST_CONF_PATH" >> "$TMP_CONF_NEW"
+
+    # Replace the original config on the host
+    mv "$TMP_CONF_NEW" "$HOST_CONF_PATH"
+    echo "    - Host config file ${HOST_CONF_PATH} has been updated."
+
+done < "$KRILL_CONTAINERS_FILE"
+
+# Restart all Krill containers to apply changes
+echo "Restarting Krill containers to apply changes..."
+while read -r krill_group_number krill_container_name; do
+    if [ -z "$krill_container_name" ]; then
+        continue
+    fi
+    if docker inspect -f '{{.State.Running}}' "$krill_container_name" >/dev/null 2>&1; then
+        # docker restart "$krill_container_name" > /dev/null
+        # docker exec "$krill_container_name" bash -c 'supervisorctl restart krill'
+        ${DIRECTORY}/setup/restart_container.sh l3-host 1 PHY host1
+        echo "  - Restarted krill on ${krill_container_name}"
+    fi
+done < "$KRILL_CONTAINERS_FILE"
+
+echo "--- Krill password restoration complete ---"
 
 echo "Done."
