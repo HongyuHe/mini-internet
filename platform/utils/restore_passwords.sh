@@ -31,7 +31,7 @@ if [ ! -f "$KRILL_CONTAINERS_FILE" ]; then
     echo "Warning: Krill containers list not found at $KRILL_CONTAINERS_FILE. Skipping Krill password restoration."
     KRILL_CONTAINERS=()
 else
-    readarray -t KRILL_CONTAINERS < <(awk \'{print $2}\' "$KRILL_CONTAINERS_FILE")
+    readarray -t KRILL_CONTAINERS < <(awk '/./{print $2}' "$KRILL_CONTAINERS_FILE")
 fi
 
 
@@ -54,6 +54,9 @@ while read -r group_number passwd; do
     # Restore Krill password
     if [ ${#KRILL_CONTAINERS[@]} -gt 0 ]; then
         for krill_container in "${KRILL_CONTAINERS[@]}"; do
+             if [ -z "$krill_container" ]; then
+                continue
+             fi
              if docker inspect -f '{{.State.Running}}' "$krill_container" >/dev/null 2>&1; then
                 echo "  - Restoring Krill password in ${krill_container}"
                 user_id="group${group_number}@netsyn.princeton.edu"
