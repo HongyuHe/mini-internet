@@ -4,7 +4,7 @@
 |         Build and manage your own Internet!          |
 |                                                      |
 |   From here, you can launch traceroutes via any      |
-|   group AS in the Mini-Internet. Each group is       |
+|   group in the AS topology. Each group is            |
 |   connected with a unique interface. In traceroute,  |
 |   use the `-i` flag to select an interface and       |
 |   thus send probes via the corresponding group.      |
