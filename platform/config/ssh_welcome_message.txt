@@ -8,8 +8,8 @@
 |                                                      |
 |              ./goto.sh nyc router                    |
 |              ./goto.sh nyc host                      |
-|              ./goto.sh dcn  s1                       |
-|              ./goto.sh dcs  a_mgh                    |
+|              ./goto.sh dcn s1                        |
+|              ./goto.sh dcs a_mgh                     |
 |                                                      |
 |   Or you can access the public measurement service:  |
 |                                                      |
