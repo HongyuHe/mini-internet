@@ -1,7 +1,7 @@
 +------------------------------------------------------+
 |                                                      |
-|   Communication Networks 2025  - Routing Project     |
-|             Public Measurement Service               |
+|  Princeton Computer Networks 2025 - Routing Project  |
+|         Build and manage your own Internet!          |
 |                                                      |
 |   From here, you can launch traceroutes via any      |
 |   group AS in the Mini-Internet. Each group is       |
@@ -11,7 +11,7 @@
 |                                                      |
 |   Example: from group 1 to group 2 (router or host)  |
 |                                                      |
-|       traceroute -i group1 zuri.group2               |
-|       traceroute -i group1 host.zuri.group2          |
+|        traceroute -i group1 nyc.group2               |
+|        traceroute -i group1 host.nyc.group2          |
 |                                                      |
 +------------------------------------------------------+
