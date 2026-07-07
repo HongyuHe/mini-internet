@@ -1,0 +1,1 @@
+multicast ff00::/8 dev SFOrouter  metric 256 

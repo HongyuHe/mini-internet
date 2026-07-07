@@ -118,8 +118,6 @@ docker run -itd --name="WEB" --cpus=2 \
 # If anything goes wrong, add "--log.level=DEBUG" to enable logging,
 # and then use "sudo docker logs PROXY" to see the logs.
 docker run -d --name='PROXY' --network="bridge" \
-    --ulimit nofile=65536:65536 \
-    --log-driver json-file --log-opt max-size=10m --log-opt max-file=5 \
     -p ${WEBSERVER_PORT_HTTP}:${WEBSERVER_PORT_HTTP} \
     -p ${WEBSERVER_PORT_HTTPS}:${WEBSERVER_PORT_HTTPS} \
     -p ${WEBSERVER_PORT_KRILL}:${WEBSERVER_PORT_KRILL} \

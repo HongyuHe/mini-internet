@@ -1,0 +1,16 @@
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ssh@if107639: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP 
+    link/ether ba:82:0f:60:f5:df brd ff:ff:ff:ff:ff:ff
+    inet 158.14.16.2/16 brd 158.14.255.255 scope global ssh
+       valid_lft forever preferred_lft forever
+3: sit0@NONE: <NOARP> mtu 1480 qdisc noop state DOWN qlen 1000
+    link/sit 0.0.0.0 brd 0.0.0.0
+113526: SFOrouter@if113525: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP qlen 1000
+    link/ether fa:6f:b4:73:57:b7 brd ff:ff:ff:ff:ff:ff
+    inet 14.107.0.1/24 scope global SFOrouter
+       valid_lft forever preferred_lft forever

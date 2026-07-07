@@ -1,0 +1,16 @@
+fa31d09f-f8e7-4ebf-86f6-979b95bbf599
+    Bridge br0
+        fail_mode: standalone
+        Port "14-A_MGH"
+            tag: 10
+            Interface "14-A_MGH"
+        Port "14-P_MGH"
+            tag: 20
+            Interface "14-P_MGH"
+        Port br0
+            Interface br0
+                type: internal
+        Port BOSrouter
+            trunks: [10, 20]
+            Interface BOSrouter
+    ovs_version: "2.17.9"

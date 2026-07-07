@@ -1,0 +1,16 @@
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+109058: 14-S1@if109057: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc netem state UP qlen 1000
+    link/ether 3a:b2:e9:a8:07:b5 brd ff:ff:ff:ff:ff:ff
+    inet6 14:201:1::2/48 scope global 
+       valid_lft forever preferred_lft forever
+2: ssh@if106996: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP 
+    link/ether 7a:af:79:1e:7f:c0 brd ff:ff:ff:ff:ff:ff
+    inet 158.14.200.4/16 brd 158.14.255.255 scope global ssh
+       valid_lft forever preferred_lft forever
+3: sit0@NONE: <NOARP> mtu 1480 qdisc noop state DOWN qlen 1000
+    link/sit 0.0.0.0 brd 0.0.0.0

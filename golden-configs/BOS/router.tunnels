@@ -1,0 +1,2 @@
+sit0: ipv6/ip remote any local any ttl 64 nopmtudisc 6rd-prefix 2002::/16
+BOS_TO_ATL: ipv6/ip remote 14.156.0.1 local 14.153.0.1 ttl 255 6rd-prefix 2002::/16

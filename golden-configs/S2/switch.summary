@@ -1,0 +1,19 @@
+c0243467-334c-43eb-a22a-0a9bfb8a1328
+    Bridge br0
+        fail_mode: standalone
+        Port "14-P_EUH"
+            tag: 20
+            Interface "14-P_EUH"
+        Port "14-A_EUH"
+            tag: 10
+            Interface "14-A_EUH"
+        Port br0
+            Interface br0
+                type: internal
+        Port "14-S3"
+            trunks: [10, 20]
+            Interface "14-S3"
+        Port ATLrouter
+            trunks: [10, 20]
+            Interface ATLrouter
+    ovs_version: "2.17.9"
